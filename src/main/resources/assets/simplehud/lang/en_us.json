@@ -1,0 +1,11 @@
+{
+  "option.modmenu.clock" : "Clock Mode",
+  "option.modmenu.clock.tick" : "Ticked",
+  "option.modmenu.clock.hr12" : "AM PM",
+  "option.modmenu.clock.hr24" : "24 HR",
+  "option.modmenu.coords" : "Coordinate Rounding Mode",
+  "option.modmenu.coords.integer" : "Integer",
+  "option.modmenu.coords.one_digit" : "Tenths Place",
+  "option.modmenu.coords.two_digits" : "Hundreths Place",
+  "option.modmenu.coords.three_digits" : "Thousandths Place"
+}

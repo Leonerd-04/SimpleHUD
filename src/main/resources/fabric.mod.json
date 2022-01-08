@@ -20,6 +20,9 @@
   "entrypoints": {
     "client": [
       "me.Ieonerd.simplehud.SimpleHUD"
+    ],
+    "modmenu": [
+      "me.Ieonerd.simplehud.SimpleHUDConfig"
     ]
   },
   "mixins": [
