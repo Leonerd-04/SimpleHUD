@@ -84,8 +84,11 @@ public class CondensedInfoHUD {
 
     //Changes the clock display's color to tell the player they can sleep
     private int getTimeColor(){
+        if(!SimpleHUDConfigScreen.INDICATE_SLEEP.getValue()) return HUD_WHITE;
+
         long time = this.client.world.getTimeOfDay() % 24000; //time = ticks since the world started
         if(this.client.world.isThundering() || (time > 12541 && time < 23460)) return GREEN;
+
         return HUD_WHITE;
     }
 

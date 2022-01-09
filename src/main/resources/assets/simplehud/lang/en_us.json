@@ -1,11 +1,14 @@
 {
   "option.modmenu.clock" : "Clock Mode",
-  "option.modmenu.clock.tick" : "Ticked",
+  "option.modmenu.clock.tick" : "Game Ticks",
   "option.modmenu.clock.hr12" : "AM PM",
   "option.modmenu.clock.hr24" : "24 HR",
   "option.modmenu.coords" : "Coordinate Rounding Mode",
   "option.modmenu.coords.integer" : "Integer",
   "option.modmenu.coords.one_digit" : "Tenths Place",
   "option.modmenu.coords.two_digits" : "Hundreths Place",
-  "option.modmenu.coords.three_digits" : "Thousandths Place"
+  "option.modmenu.coords.three_digits" : "Thousandths Place",
+  "option.modmenu.sleep_indicator" : "Indicate Able to Sleep",
+  "option.modmenu.sleep_indicator.true" : "ON",
+  "option.modmenu.sleep_indicator.false" : "OFF"
 }

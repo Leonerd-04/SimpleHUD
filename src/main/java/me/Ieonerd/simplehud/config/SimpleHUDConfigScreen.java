@@ -1,6 +1,7 @@
 package me.Ieonerd.simplehud.config;
 
 import com.terraformersmc.modmenu.config.ModMenuConfigManager;
+import com.terraformersmc.modmenu.config.option.BooleanConfigOption;
 import com.terraformersmc.modmenu.config.option.EnumConfigOption;
 import me.Ieonerd.simplehud.gui.CondensedInfoHUD;
 import net.fabricmc.api.EnvType;
@@ -17,6 +18,7 @@ import net.minecraft.text.Text;
 public class SimpleHUDConfigScreen extends GameOptionsScreen {
     public static final EnumConfigOption<CondensedInfoHUD.Clock> CLOCK_CONFIG = new EnumConfigOption<>("clock", CondensedInfoHUD.Clock.HR24);
     public static final EnumConfigOption<CondensedInfoHUD.CoordRounding> COORD_ROUNDING = new EnumConfigOption<>("coords", CondensedInfoHUD.CoordRounding.THREE_DIGITS);
+    public static final BooleanConfigOption INDICATE_SLEEP = new BooleanConfigOption("sleep_indicator", true);
     private ButtonListWidget buttonList;
 
     public SimpleHUDConfigScreen(Screen parent) {
@@ -27,6 +29,7 @@ public class SimpleHUDConfigScreen extends GameOptionsScreen {
         buttonList = new ButtonListWidget(this.client, this.width, this.height, 32, this.height - 32, 25);
         buttonList.addSingleOptionEntry(CLOCK_CONFIG.asOption());
         buttonList.addSingleOptionEntry(COORD_ROUNDING.asOption());
+        buttonList.addSingleOptionEntry(INDICATE_SLEEP.asOption());
         this.addDrawableChild(buttonList);
         this.addDrawableChild(new ButtonWidget(this.width / 2 - 100, this.height - 27, 200, 20, ScreenTexts.DONE, (button) -> {
             ModMenuConfigManager.save();
