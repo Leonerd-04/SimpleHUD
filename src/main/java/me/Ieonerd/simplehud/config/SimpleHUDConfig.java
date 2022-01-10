@@ -4,41 +4,54 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.terraformersmc.modmenu.config.option.BooleanConfigOption;
 import com.terraformersmc.modmenu.config.option.EnumConfigOption;
+import com.terraformersmc.modmenu.config.option.OptionConvertable;
 import me.Ieonerd.simplehud.SimpleHUD;
 import me.Ieonerd.simplehud.gui.CondensedInfoHUD;
 import net.fabricmc.loader.api.FabricLoader;
 
 import java.io.*;
+import java.util.ArrayList;
 
 //Handles config, including storage, for the mod
-//I figured out a lot of this code from Terraformers MC's implementation in ModMenu.
+//I figured out a lot of this code by looking at the implementation in Mod Menu.
+//Credit to TerraformersMC, though I didn't use their code verbatim
 public class SimpleHUDConfig {
     public final EnumConfigOption<CondensedInfoHUD.Clock> clockMode = new EnumConfigOption<>("clock", CondensedInfoHUD.Clock.HR24);
     public final EnumConfigOption<CondensedInfoHUD.CoordRounding> coordRounding = new EnumConfigOption<>("coords", CondensedInfoHUD.CoordRounding.THREE_DIGITS);
     public final BooleanConfigOption indicateCanSleep = new BooleanConfigOption("sleep_indicator", true);
+    public final BooleanConfigOption indicateLowFps = new BooleanConfigOption("low_fps", true);
+    public final ArrayList<OptionConvertable> options = new ArrayList<>();
 
-    private static Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    private final static Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     private static File file;
 
     //Returns a config with default values
     public SimpleHUDConfig(){
+        options.add(clockMode);
+        options.add(coordRounding);
+        options.add(indicateCanSleep);
+        options.add(indicateLowFps);
     }
 
     //Returns a config with values read from a json
     public SimpleHUDConfig(ConfigFileFormat format){
+        this();
         if(format == null) {
             SimpleHUD.LOGGER.error("Config file not read properly; Reverting to default values");
             return;
         }
+
         clockMode.setValue(format.clockMode);
         coordRounding.setValue(format.coordRounding);
         indicateCanSleep.setValue(format.indicateCanSleep);
+        indicateLowFps.setValue(format.indicateLowFps);
     }
 
     //Formats the game's config as another class that is easily stored
     private ConfigFileFormat formatForStorage(){
-        return new ConfigFileFormat(clockMode.getValue(), coordRounding.getValue(), indicateCanSleep.getValue());
+        return new ConfigFileFormat(clockMode.getValue(), coordRounding.getValue(),
+                indicateCanSleep.getValue(), indicateLowFps.getValue());
     }
 
     //Checks if the config file has the correct path
@@ -58,7 +71,7 @@ public class SimpleHUDConfig {
                 SimpleHUDConfigScreen.CONFIG.save();
             }
             FileReader reader = new FileReader(file);
-            format = gson.fromJson(reader, ConfigFileFormat.class);
+            format = GSON.fromJson(reader, ConfigFileFormat.class);
 
         } catch (FileNotFoundException e) {
             SimpleHUD.LOGGER.error("Config file failed to load; Reverting to default values");
@@ -72,7 +85,7 @@ public class SimpleHUDConfig {
     //Tries to save the config file
     public void save(){
         prepareConfigFile();
-        String json = gson.toJson(this.formatForStorage());
+        String json = GSON.toJson(this.formatForStorage());
 
         try (FileWriter fileWriter = new FileWriter(file)) {
             fileWriter.write(json);
@@ -83,15 +96,18 @@ public class SimpleHUDConfig {
     }
 
 
-    private class ConfigFileFormat {
+    private static class ConfigFileFormat {
         CondensedInfoHUD.Clock clockMode;
         CondensedInfoHUD.CoordRounding coordRounding;
         boolean indicateCanSleep;
+        boolean indicateLowFps;
 
-        private ConfigFileFormat(CondensedInfoHUD.Clock clockMode, CondensedInfoHUD.CoordRounding coordRounding, boolean indicateCanSleep){
+        private ConfigFileFormat(CondensedInfoHUD.Clock clockMode, CondensedInfoHUD.CoordRounding coordRounding,
+                                 boolean indicateCanSleep, boolean indicateLowFps){
             this.clockMode = clockMode;
             this.coordRounding = coordRounding;
             this.indicateCanSleep = indicateCanSleep;
+            this.indicateLowFps = indicateLowFps;
         }
     }
 

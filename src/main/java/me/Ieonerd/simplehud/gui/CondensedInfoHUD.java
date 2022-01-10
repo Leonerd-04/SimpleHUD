@@ -15,7 +15,7 @@ public class CondensedInfoHUD {
     MinecraftClient client;
     private static final int HUD_WHITE = 0xE0E0E0; //Color of the F3 HUD text
     private static final int SLEEP_GREEN = 0x40D646;
-    private static final int FPS_YELLOW = 0xE6E65C;
+    private static final int FPS_YELLOW = 0xFFFF45;
     private static final int FPS_RED = 0xE66B53;
 
     public CondensedInfoHUD(MinecraftClient client){
@@ -60,6 +60,7 @@ public class CondensedInfoHUD {
 
     //Changes the FPS display's color when the fps goes below 60
     private int getFPSColor(int fps){
+        if(!CONFIG.indicateLowFps.getValue()) return HUD_WHITE;
         if(fps < 30) return FPS_RED;
         if(fps < 60) return FPS_YELLOW;
         return HUD_WHITE;

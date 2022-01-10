@@ -1,6 +1,7 @@
 package me.Ieonerd.simplehud.config;
 
 import com.terraformersmc.modmenu.config.ModMenuConfigManager;
+import com.terraformersmc.modmenu.config.option.OptionConvertable;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
@@ -22,12 +23,11 @@ public class SimpleHUDConfigScreen extends GameOptionsScreen {
 
     protected void init(){
         buttonList = new ButtonListWidget(this.client, this.width, this.height, 32, this.height - 32, 25);
-        buttonList.addSingleOptionEntry(CONFIG.clockMode.asOption());
-        buttonList.addSingleOptionEntry(CONFIG.coordRounding.asOption());
-        buttonList.addSingleOptionEntry(CONFIG.indicateCanSleep.asOption());
+        for(OptionConvertable option : CONFIG.options) buttonList.addSingleOptionEntry(option.asOption());
         this.addDrawableChild(buttonList);
+
         this.addDrawableChild(new ButtonWidget(this.width / 2 - 100, this.height - 27, 200, 20, ScreenTexts.DONE, (button) -> {
-            ModMenuConfigManager.save();
+            CONFIG.save();
             this.client.setScreen(this.parent);
         }));
     }

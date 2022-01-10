@@ -10,5 +10,8 @@
   "option.modmenu.coords.three_digits" : "Thousandths Place",
   "option.modmenu.sleep_indicator" : "Indicate Able to Sleep",
   "option.modmenu.sleep_indicator.true" : "ON",
-  "option.modmenu.sleep_indicator.false" : "OFF"
+  "option.modmenu.sleep_indicator.false" : "OFF",
+  "option.modmenu.low_fps" : "Indicate Low Fps",
+  "option.modmenu.low_fps.true" : "ON",
+  "option.modmenu.low_fps.false" : "OFF"
 }
