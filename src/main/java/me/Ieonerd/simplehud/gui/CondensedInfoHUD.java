@@ -1,7 +1,6 @@
 package me.Ieonerd.simplehud.gui;
 
 import com.google.common.base.Strings;
-import me.Ieonerd.simplehud.config.SimpleHUDConfigScreen;
 import me.Ieonerd.simplehud.mixin.MinecraftClientAccessor;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.math.MatrixStack;
@@ -10,16 +9,20 @@ import net.minecraft.util.math.Vec3d;
 import java.util.Locale;
 import java.util.Objects;
 
+import static me.Ieonerd.simplehud.config.SimpleHUDConfigScreen.CONFIG;
+
 public class CondensedInfoHUD {
     MinecraftClient client;
-    private static final int HUD_WHITE = 14737632; //Color of the F3 HUD text
-    private static final int GREEN = 4249158;
+    private static final int HUD_WHITE = 0xE0E0E0; //Color of the F3 HUD text
+    private static final int GREEN = 0x40D646; //Color used to indicate that the player can sleep
 
     public CondensedInfoHUD(MinecraftClient client){
         this.client = client;
     }
 
     //Rendering algorithm based off of the one used to render the left side of the F3 screen
+    //With the exception that instead of rendering one string as a row, this mod renders one array of strings as a row
+    //To allow for individual sections of a given row to be different colors.
     public void render(MatrixStack matrices){
         String[][] text = this.getText();
         int[][] colors = getColors();
@@ -54,7 +57,7 @@ public class CondensedInfoHUD {
 
     private String getCoords(){
         Vec3d position = this.client.getCameraEntity().getPos();
-        int round = SimpleHUDConfigScreen.COORD_ROUNDING.getValue().getDigits();
+        int round = CONFIG.coordRounding.getValue().getDigits();
 
         //The String.format() will replace %% with % and %d with a number
         String placeDigits = String.format("XYZ: %%.%df, %%.%df, %%.%df", round, round, round);
@@ -68,7 +71,7 @@ public class CondensedInfoHUD {
 
     private String getTime(){
         long time = this.client.world.getTimeOfDay(); //time = ticks since the world started
-        Clock setting = SimpleHUDConfigScreen.CLOCK_CONFIG.getValue();
+        Clock setting = CONFIG.clockMode.getValue();
 
         if(setting == Clock.TICK) return String.format(Locale.ROOT, "%d",time % 24000); //Ticked clock, like /time query daytime
 
@@ -84,7 +87,7 @@ public class CondensedInfoHUD {
 
     //Changes the clock display's color to tell the player they can sleep
     private int getTimeColor(){
-        if(!SimpleHUDConfigScreen.INDICATE_SLEEP.getValue()) return HUD_WHITE;
+        if(!CONFIG.indicateCanSleep.getValue()) return HUD_WHITE;
 
         long time = this.client.world.getTimeOfDay() % 24000; //time = ticks since the world started
         if(this.client.world.isThundering() || (time > 12541 && time < 23460)) return GREEN;

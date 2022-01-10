@@ -22,7 +22,7 @@
       "me.Ieonerd.simplehud.SimpleHUD"
     ],
     "modmenu": [
-      "me.Ieonerd.simplehud.SimpleHUDConfig"
+      "me.Ieonerd.simplehud.SimpleHUDModMenu"
     ]
   },
   "mixins": [
