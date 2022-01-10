@@ -14,7 +14,9 @@ import static me.Ieonerd.simplehud.config.SimpleHUDConfigScreen.CONFIG;
 public class CondensedInfoHUD {
     MinecraftClient client;
     private static final int HUD_WHITE = 0xE0E0E0; //Color of the F3 HUD text
-    private static final int GREEN = 0x40D646; //Color used to indicate that the player can sleep
+    private static final int SLEEP_GREEN = 0x40D646;
+    private static final int FPS_YELLOW = 0xE6E65C;
+    private static final int FPS_RED = 0xE66B53;
 
     public CondensedInfoHUD(MinecraftClient client){
         this.client = client;
@@ -24,8 +26,9 @@ public class CondensedInfoHUD {
     //With the exception that instead of rendering one string as a row, this mod renders one array of strings as a row
     //To allow for individual sections of a given row to be different colors.
     public void render(MatrixStack matrices){
-        String[][] text = this.getText();
-        int[][] colors = getColors();
+        int fps = MinecraftClientAccessor.getCurrentFPS();
+        String[][] text = this.getText(fps);
+        int[][] colors = getColors(fps);
         String[] row;
         int[] rowColors;
 
@@ -41,6 +44,7 @@ public class CondensedInfoHUD {
         }
     }
 
+    //Renders an array of strings as a row in the HUD
     private void renderRow(MatrixStack matrices, int height, String[] row, int[] colors){
         int position = 0;
         String str;
@@ -54,6 +58,12 @@ public class CondensedInfoHUD {
         }
     }
 
+    //Changes the FPS display's color when the fps goes below 60
+    private int getFPSColor(int fps){
+        if(fps < 30) return FPS_RED;
+        if(fps < 60) return FPS_YELLOW;
+        return HUD_WHITE;
+    }
 
     private String getCoords(){
         Vec3d position = this.client.getCameraEntity().getPos();
@@ -63,10 +73,6 @@ public class CondensedInfoHUD {
         String placeDigits = String.format("XYZ: %%.%df, %%.%df, %%.%df", round, round, round);
 
         return String.format(Locale.ROOT, placeDigits, position.getX(), position.getY(), position.getZ());
-    }
-
-    private String getFPS(){
-        return MinecraftClientAccessor.getCurrentFPS() + " fps";
     }
 
     private String getTime(){
@@ -90,26 +96,25 @@ public class CondensedInfoHUD {
         if(!CONFIG.indicateCanSleep.getValue()) return HUD_WHITE;
 
         long time = this.client.world.getTimeOfDay() % 24000; //time = ticks since the world started
-        if(this.client.world.isThundering() || (time > 12541 && time < 23460)) return GREEN;
+        if(this.client.world.isThundering() || (time > 12541 && time < 23460)) return SLEEP_GREEN;
 
         return HUD_WHITE;
     }
 
-    private String[][] getText(){
+    private String[][] getText(int fps){
         return new String[][]{
-                new String[]{getFPS()},
+                new String[]{String.valueOf(fps), " fps"},
                 new String[]{getCoords()} ,
                 new String[]{"Time: ", getTime()}
         };
     }
 
-    private int[][] getColors(){
+    private int[][] getColors(int fps){
         return new int[][]{
-                new int[]{HUD_WHITE},
+                new int[]{getFPSColor(fps), HUD_WHITE},
                 new int[]{HUD_WHITE},
                 new int[]{HUD_WHITE, getTimeColor()}
         };
-
     }
 
     public enum Clock{
