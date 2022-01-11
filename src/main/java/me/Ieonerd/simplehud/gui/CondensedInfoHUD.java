@@ -16,7 +16,7 @@ public class CondensedInfoHUD {
     private static final int HUD_WHITE = 0xE0E0E0; //Color of the F3 HUD text
     private static final int SLEEP_GREEN = 0x40D646;
     private static final int FPS_YELLOW = 0xFFFF45;
-    private static final int FPS_RED = 0xE66B53;
+    private static final int FPS_RED = 0xF48282;
 
     public CondensedInfoHUD(MinecraftClient client){
         this.client = client;
@@ -27,8 +27,9 @@ public class CondensedInfoHUD {
     //To allow for individual sections of a given row to be different colors.
     public void render(MatrixStack matrices){
         int fps = MinecraftClientAccessor.getCurrentFPS();
-        String[][] text = this.getText(fps);
-        int[][] colors = getColors(fps);
+        long minFps = getMinFps();
+        String[][] text = this.getText(fps, minFps);
+        int[][] colors = getColors(fps, minFps);
         String[] row;
         int[] rowColors;
 
@@ -56,6 +57,13 @@ public class CondensedInfoHUD {
             this.client.textRenderer.draw(matrices, str, 2.0F + position, (float)height, color);
             position += this.client.textRenderer.getWidth(str);
         }
+    }
+
+    private int getMinFps(){
+        long max = 0;
+        long[] fpsData = this.client.getMetricsData().getSamples();
+        for(long fps : fpsData) max = Math.max(max, fps);
+        return (int)(1000000000.0 / max);
     }
 
     //Changes the FPS display's color when the fps goes below 60
@@ -102,17 +110,17 @@ public class CondensedInfoHUD {
         return HUD_WHITE;
     }
 
-    private String[][] getText(int fps){
+    private String[][] getText(int fps, long fpsMin){
         return new String[][]{
-                new String[]{String.valueOf(fps), " fps"},
+                new String[]{String.valueOf(fps), "/", String.valueOf(fpsMin), " fps"},
                 new String[]{getCoords()} ,
                 new String[]{"Time: ", getTime()}
         };
     }
 
-    private int[][] getColors(int fps){
+    private int[][] getColors(int fps, long fpsMin){
         return new int[][]{
-                new int[]{getFPSColor(fps), HUD_WHITE},
+                new int[]{getFPSColor(fps), HUD_WHITE, getFPSColor((int) fpsMin), HUD_WHITE},
                 new int[]{HUD_WHITE},
                 new int[]{HUD_WHITE, getTimeColor()}
         };
