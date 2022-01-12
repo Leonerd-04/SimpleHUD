@@ -6,7 +6,7 @@
   "option.modmenu.coords" : "Coordinate Rounding Mode",
   "option.modmenu.coords.integer" : "Integer",
   "option.modmenu.coords.one_digit" : "Tenths Place",
-  "option.modmenu.coords.two_digits" : "Hundreths Place",
+  "option.modmenu.coords.two_digits" : "Hundreds Place",
   "option.modmenu.coords.three_digits" : "Thousandths Place",
   "option.modmenu.sleep_indicator" : "Indicate Able to Sleep",
   "option.modmenu.sleep_indicator.true" : "ON",
