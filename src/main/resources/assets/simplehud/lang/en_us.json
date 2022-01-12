@@ -13,5 +13,8 @@
   "option.modmenu.sleep_indicator.false" : "OFF",
   "option.modmenu.low_fps" : "Indicate Low Fps",
   "option.modmenu.low_fps.true" : "ON",
-  "option.modmenu.low_fps.false" : "OFF"
+  "option.modmenu.low_fps.false" : "OFF",
+  "option.modmenu.fps_min" : "Show Minimum FPS",
+  "option.modmenu.fps_min.true" : "ON",
+  "option.modmenu.fps_min.false" : "OFF"
 }

@@ -27,7 +27,7 @@ public class CondensedInfoHUD {
     //To allow for individual sections of a given row to be different colors.
     public void render(MatrixStack matrices){
         int fps = MinecraftClientAccessor.getCurrentFPS();
-        long minFps = getMinFps();
+        int minFps = getMinFps();
         String[][] text = this.getText(fps, minFps);
         int[][] colors = getColors(fps, minFps);
         String[] row;
@@ -59,14 +59,16 @@ public class CondensedInfoHUD {
         }
     }
 
+    //Gets the minimum fps over the last 240 frames by finding the largest frame time
+    //Good indicator of stuttering at higher fps
     private int getMinFps(){
         long max = 0;
-        long[] fpsData = this.client.getMetricsData().getSamples();
+        long[] fpsData = this.client.getMetricsData().getSamples(); //Fps data is in nanoseconds per frame
         for(long fps : fpsData) max = Math.max(max, fps);
         return (int)(1000000000.0 / max);
     }
 
-    //Changes the FPS display's color when the fps goes below 60
+    //Changes the fps display's color when fps goes below 60
     private int getFPSColor(int fps){
         if(!CONFIG.indicateLowFps.getValue()) return HUD_WHITE;
         if(fps < 30) return FPS_RED;
@@ -78,7 +80,7 @@ public class CondensedInfoHUD {
         Vec3d position = this.client.getCameraEntity().getPos();
         int round = CONFIG.coordRounding.getValue().getDigits();
 
-        //The String.format() will replace %% with % and %d with a number
+        //This String.format() will replace %% with % and %d with the number of digits to round to
         String placeDigits = String.format("XYZ: %%.%df, %%.%df, %%.%df", round, round, round);
 
         return String.format(Locale.ROOT, placeDigits, position.getX(), position.getY(), position.getZ());
@@ -110,17 +112,21 @@ public class CondensedInfoHUD {
         return HUD_WHITE;
     }
 
-    private String[][] getText(int fps, long fpsMin){
+    private String[][] getText(int fps, int fpsMin){
+        String[] fpsRow = CONFIG.displayMinFps.getValue() ?
+                new String[]{String.valueOf(fps), "/", String.valueOf(fpsMin), " fps"} :
+                new String[]{String.valueOf(fps), " fps"};
+
         return new String[][]{
-                new String[]{String.valueOf(fps), "/", String.valueOf(fpsMin), " fps"},
+                fpsRow,
                 new String[]{getCoords()} ,
                 new String[]{"Time: ", getTime()}
         };
     }
 
-    private int[][] getColors(int fps, long fpsMin){
+    private int[][] getColors(int fps, int fpsMin){
         return new int[][]{
-                new int[]{getFPSColor(fps), HUD_WHITE, getFPSColor((int) fpsMin), HUD_WHITE},
+                new int[]{getFPSColor(fps), HUD_WHITE, getFPSColor(fpsMin), HUD_WHITE},
                 new int[]{HUD_WHITE},
                 new int[]{HUD_WHITE, getTimeColor()}
         };

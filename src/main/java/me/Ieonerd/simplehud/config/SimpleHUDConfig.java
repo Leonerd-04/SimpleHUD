@@ -20,6 +20,7 @@ public class SimpleHUDConfig {
     public final EnumConfigOption<CondensedInfoHUD.CoordRounding> coordRounding = new EnumConfigOption<>("coords", CondensedInfoHUD.CoordRounding.THREE_DIGITS);
     public final BooleanConfigOption indicateCanSleep = new BooleanConfigOption("sleep_indicator", true);
     public final BooleanConfigOption indicateLowFps = new BooleanConfigOption("low_fps", true);
+    public final BooleanConfigOption displayMinFps = new BooleanConfigOption("fps_min", true);
     public final ArrayList<OptionConvertable> options = new ArrayList<>();
 
     private final static Gson GSON = new GsonBuilder().setPrettyPrinting().create();
@@ -32,6 +33,7 @@ public class SimpleHUDConfig {
         options.add(coordRounding);
         options.add(indicateCanSleep);
         options.add(indicateLowFps);
+        options.add(displayMinFps);
     }
 
     //Returns a config with values read from a json
@@ -46,12 +48,13 @@ public class SimpleHUDConfig {
         coordRounding.setValue(format.coordRounding);
         indicateCanSleep.setValue(format.indicateCanSleep);
         indicateLowFps.setValue(format.indicateLowFps);
+        displayMinFps.setValue(format.displayMinFps);
     }
 
     //Formats the game's config as another class that is easily stored
     private ConfigFileFormat formatForStorage(){
         return new ConfigFileFormat(clockMode.getValue(), coordRounding.getValue(),
-                indicateCanSleep.getValue(), indicateLowFps.getValue());
+                indicateCanSleep.getValue(), indicateLowFps.getValue(), displayMinFps.getValue());
     }
 
     //Checks if the config file has the correct path
@@ -101,13 +104,15 @@ public class SimpleHUDConfig {
         CondensedInfoHUD.CoordRounding coordRounding;
         boolean indicateCanSleep;
         boolean indicateLowFps;
+        boolean displayMinFps;
 
         private ConfigFileFormat(CondensedInfoHUD.Clock clockMode, CondensedInfoHUD.CoordRounding coordRounding,
-                                 boolean indicateCanSleep, boolean indicateLowFps){
+                                 boolean indicateCanSleep, boolean indicateLowFps, boolean displayMinFps){
             this.clockMode = clockMode;
             this.coordRounding = coordRounding;
             this.indicateCanSleep = indicateCanSleep;
             this.indicateLowFps = indicateLowFps;
+            this.displayMinFps = displayMinFps;
         }
     }
 
