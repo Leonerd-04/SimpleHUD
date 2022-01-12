@@ -16,5 +16,8 @@
   "option.modmenu.low_fps.false" : "OFF",
   "option.modmenu.fps_min" : "Show Minimum FPS",
   "option.modmenu.fps_min.true" : "ON",
-  "option.modmenu.fps_min.false" : "OFF"
+  "option.modmenu.fps_min.false" : "OFF",
+  "option.modmenu.respect_reduced_f3" : "Respect Reduced F3",
+  "option.modmenu.respect_reduced_f3.true" : "ON",
+  "option.modmenu.respect_reduced_f3.false" : "OFF"
 }

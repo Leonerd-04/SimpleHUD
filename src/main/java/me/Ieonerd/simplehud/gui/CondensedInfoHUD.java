@@ -6,6 +6,8 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.Vec3d;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Objects;
 
@@ -28,16 +30,16 @@ public class CondensedInfoHUD {
     public void render(MatrixStack matrices){
         int fps = MinecraftClientAccessor.getCurrentFPS();
         int minFps = getMinFps();
-        String[][] text = this.getText(fps, minFps);
-        int[][] colors = getColors(fps, minFps);
+        ArrayList<String[]> text = this.getText(fps, minFps);
+        ArrayList<int[]> colors = getColors(fps, minFps);
         String[] row;
         int[] rowColors;
 
-        for(int i = 0; i < text.length; i++){
-            row = text[i];
-            rowColors = colors[i];
+        for(int i = 0; i < text.size(); i++){
+            row = text.get(i);
+            rowColors = colors.get(i);
 
-            if(Strings.isNullOrEmpty(row[0])) continue;
+            if(row == null) continue;
             Objects.requireNonNull(this.client.textRenderer);
 
             int height = 2 + 9 * i;
@@ -112,24 +114,60 @@ public class CondensedInfoHUD {
         return HUD_WHITE;
     }
 
-    private String[][] getText(int fps, int fpsMin){
+    private String[][] getTex(int fps, int fpsMin){
         String[] fpsRow = CONFIG.displayMinFps.getValue() ?
                 new String[]{String.valueOf(fps), "/", String.valueOf(fpsMin), " fps"} :
                 new String[]{String.valueOf(fps), " fps"};
 
+        boolean hideCoords = CONFIG.respectReducedF3.getValue() && this.client.hasReducedDebugInfo();
+
         return new String[][]{
                 fpsRow,
-                new String[]{getCoords()} ,
-                new String[]{"Time: ", getTime()}
+                hideCoords ? new String[]{"Time: ", getTime()} : new String[]{getCoords()} ,
+                hideCoords ? null : new String[]{"Time: ", getTime()}
         };
     }
 
-    private int[][] getColors(int fps, int fpsMin){
+    private ArrayList<String[]> getText(int fps, int fpsMin){
+        String[] fpsRow = CONFIG.displayMinFps.getValue() ?
+                new String[]{String.valueOf(fps), "/", String.valueOf(fpsMin), " fps"} :
+                new String[]{String.valueOf(fps), " fps"};
+
+        ArrayList<String[]> arr = new ArrayList<>();
+
+        arr.add(fpsRow);
+
+        if(CONFIG.respectReducedF3.getValue() && this.client.hasReducedDebugInfo()){
+            arr.add(new String[]{"Time: ", getTime()});
+            return arr;
+        }
+
+        arr.add(new String[]{getCoords()});
+        arr.add(new String[]{"Time: ", getTime()});
+        return arr;
+    }
+
+    private int[][] getColor(int fps, int fpsMin){
         return new int[][]{
                 new int[]{getFPSColor(fps), HUD_WHITE, getFPSColor(fpsMin), HUD_WHITE},
                 new int[]{HUD_WHITE},
                 new int[]{HUD_WHITE, getTimeColor()}
         };
+    }
+
+    private ArrayList<int[]> getColors(int fps, int fpsMin){
+        ArrayList<int[]> arr = new ArrayList<>();
+
+        arr.add(new int[]{getFPSColor(fps), HUD_WHITE, getFPSColor(fpsMin), HUD_WHITE});
+
+        if(CONFIG.respectReducedF3.getValue() && this.client.hasReducedDebugInfo()){
+            arr.add(new int[]{HUD_WHITE, getTimeColor()});
+            return arr;
+        }
+
+        arr.add(new int[]{HUD_WHITE});
+        arr.add(new int[]{HUD_WHITE, getTimeColor()});
+        return arr;
     }
 
     public enum Clock{

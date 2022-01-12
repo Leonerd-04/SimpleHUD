@@ -21,6 +21,7 @@ public class SimpleHUDConfig {
     public final BooleanConfigOption indicateCanSleep = new BooleanConfigOption("sleep_indicator", true);
     public final BooleanConfigOption indicateLowFps = new BooleanConfigOption("low_fps", true);
     public final BooleanConfigOption displayMinFps = new BooleanConfigOption("fps_min", true);
+    public final BooleanConfigOption respectReducedF3 = new BooleanConfigOption("respect_reduced_f3", false);
     public final ArrayList<OptionConvertable> options = new ArrayList<>();
 
     private final static Gson GSON = new GsonBuilder().setPrettyPrinting().create();
@@ -34,6 +35,7 @@ public class SimpleHUDConfig {
         options.add(indicateCanSleep);
         options.add(indicateLowFps);
         options.add(displayMinFps);
+        options.add(respectReducedF3);
     }
 
     //Returns a config with values read from a json
@@ -54,7 +56,7 @@ public class SimpleHUDConfig {
     //Formats the game's config as another class that is easily stored
     private ConfigFileFormat formatForStorage(){
         return new ConfigFileFormat(clockMode.getValue(), coordRounding.getValue(),
-                indicateCanSleep.getValue(), indicateLowFps.getValue(), displayMinFps.getValue());
+                indicateCanSleep.getValue(), indicateLowFps.getValue(), displayMinFps.getValue(), respectReducedF3.getValue());
     }
 
     //Checks if the config file has the correct path
@@ -105,14 +107,16 @@ public class SimpleHUDConfig {
         boolean indicateCanSleep;
         boolean indicateLowFps;
         boolean displayMinFps;
+        boolean respectReducedF3;
 
         private ConfigFileFormat(CondensedInfoHUD.Clock clockMode, CondensedInfoHUD.CoordRounding coordRounding,
-                                 boolean indicateCanSleep, boolean indicateLowFps, boolean displayMinFps){
+                                 boolean indicateCanSleep, boolean indicateLowFps, boolean displayMinFps, boolean respectReducedF3){
             this.clockMode = clockMode;
             this.coordRounding = coordRounding;
             this.indicateCanSleep = indicateCanSleep;
             this.indicateLowFps = indicateLowFps;
             this.displayMinFps = displayMinFps;
+            this.respectReducedF3 = respectReducedF3;
         }
     }
 
