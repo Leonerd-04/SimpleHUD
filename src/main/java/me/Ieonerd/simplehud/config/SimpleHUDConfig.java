@@ -16,30 +16,29 @@ import net.minecraft.text.TranslatableText;
 import java.io.*;
 import java.util.ArrayList;
 
-//Handles config, including storage, for the mod
+//Handles config, including storage, for this mod
 //I figured out a lot of this code by looking at the implementation in Mod Menu.
 //Credit to TerraformersMC, though I didn't use their code verbatim
 public class SimpleHUDConfig {
     public int coordinateRounding = 3;
     public final EnumConfigOption<CondensedInfoHUD.Clock> clockMode = new EnumConfigOption<>("clock", CondensedInfoHUD.Clock.HR24);
-        public final BooleanConfigOption indicateCanSleep = new BooleanConfigOption("sleep_indicator", true);
+    public final BooleanConfigOption indicateCanSleep = new BooleanConfigOption("sleep_indicator", true);
     public final BooleanConfigOption indicateLowFps = new BooleanConfigOption("low_fps", true);
     public final BooleanConfigOption displayMinFps = new BooleanConfigOption("fps_min", true);
     public final BooleanConfigOption respectReducedF3 = new BooleanConfigOption("respect_reduced_f3", false);
+
     public final DoubleOption coordsRounding = new DoubleOption("option.modmenu.coords", 0.0, 6.0, 1.0F,
-            gameOptions -> (double) coordinateRounding,
-            (gameOptions, rounding) -> coordinateRounding = (int) rounding.doubleValue(),
+            gameOptions -> (double) coordinateRounding, //getter for the coordinate rounding
+            (gameOptions, rounding) -> coordinateRounding = (int) rounding.doubleValue(), //setter for the coordinate rounding
             (gameOptions, option) -> {
                 TranslatableText valueKey = new TranslatableText(String.format("option.modmenu.coords.%d", coordinateRounding));
-                return new TranslatableText("option.modmenu.coords", valueKey);
+                return new TranslatableText("option.modmenu.coords", valueKey); //getter for the display text
             }
     );
-
 
     public final ArrayList<Option> options = new ArrayList<>();
 
     private final static Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-
     private static File file;
 
     //Returns a config with default values
@@ -107,6 +106,7 @@ public class SimpleHUDConfig {
         String json = GSON.toJson(this.formatForStorage());
 
         SimpleHUD.LOGGER.info("Saving config file");
+
         try (FileWriter fileWriter = new FileWriter(file)) {
             fileWriter.write(json);
         } catch (IOException e) {
@@ -115,7 +115,7 @@ public class SimpleHUDConfig {
         }
     }
 
-
+    //Class that is used to store config as a json
     private static class ConfigFileFormat {
         CondensedInfoHUD.Clock clockMode;
         int coordRounding;
