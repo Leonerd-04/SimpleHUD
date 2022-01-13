@@ -3,8 +3,8 @@
   "id": "simplehud",
   "version": "${version}",
 
-  "name": "Simple HUD",
-  "description": "Adds a simple, customizable HUD to Minecraft to substitute for the F3 HUD",
+  "name": "SimpleHUD",
+  "description": "Adds a simple, informational display to Minecraft",
   "authors": [
     "Ieonerd"
   ],
@@ -16,7 +16,7 @@
   "license": "CC0-1.0",
   "icon": "assets/modid/icon.png",
 
-  "environment": "*",
+  "environment": "client",
   "entrypoints": {
     "client": [
       "me.Ieonerd.simplehud.SimpleHUD"
@@ -26,7 +26,7 @@
     ]
   },
   "mixins": [
-    "modid.mixins.json"
+    "simplehud.mixins.json"
   ],
 
   "depends": {
@@ -36,6 +36,6 @@
     "java": ">=16"
   },
   "suggests": {
-    "another-mod": "*"
+    "modmenu": "*"
   }
 }
