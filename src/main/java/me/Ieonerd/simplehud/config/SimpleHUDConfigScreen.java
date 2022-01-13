@@ -1,6 +1,5 @@
 package me.Ieonerd.simplehud.config;
 
-import com.terraformersmc.modmenu.config.ModMenuConfigManager;
 import com.terraformersmc.modmenu.config.option.OptionConvertable;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -10,6 +9,7 @@ import net.minecraft.client.gui.screen.ScreenTexts;
 import net.minecraft.client.gui.screen.option.GameOptionsScreen;
 import net.minecraft.client.gui.widget.ButtonListWidget;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.option.Option;
 import net.minecraft.text.Text;
 
 @Environment(EnvType.CLIENT)
@@ -23,7 +23,7 @@ public class SimpleHUDConfigScreen extends GameOptionsScreen {
 
     protected void init(){
         buttonList = new ButtonListWidget(this.client, this.width, this.height, 32, this.height - 32, 25);
-        for(OptionConvertable option : CONFIG.options) buttonList.addSingleOptionEntry(option.asOption());
+        for(Option option : CONFIG.options) buttonList.addSingleOptionEntry(option);
         this.addDrawableChild(buttonList);
 
         this.addDrawableChild(new ButtonWidget(this.width / 2 - 100, this.height - 27, 200, 20, ScreenTexts.DONE, (button) -> {

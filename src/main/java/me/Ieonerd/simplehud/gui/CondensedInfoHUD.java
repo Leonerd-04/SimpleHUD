@@ -1,12 +1,10 @@
 package me.Ieonerd.simplehud.gui;
 
-import com.google.common.base.Strings;
 import me.Ieonerd.simplehud.mixin.MinecraftClientAccessor;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.Vec3d;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Objects;
@@ -80,7 +78,7 @@ public class CondensedInfoHUD {
 
     private String getCoords(){
         Vec3d position = this.client.getCameraEntity().getPos();
-        int round = CONFIG.coordRounding.getValue().getDigits();
+        int round = (int) CONFIG.coordsRounding.get(client.options);
 
         //This String.format() will replace %% with % and %d with the number of digits to round to
         String placeDigits = String.format("XYZ: %%.%df, %%.%df, %%.%df", round, round, round);
@@ -114,20 +112,6 @@ public class CondensedInfoHUD {
         return HUD_WHITE;
     }
 
-    private String[][] getTex(int fps, int fpsMin){
-        String[] fpsRow = CONFIG.displayMinFps.getValue() ?
-                new String[]{String.valueOf(fps), "/", String.valueOf(fpsMin), " fps"} :
-                new String[]{String.valueOf(fps), " fps"};
-
-        boolean hideCoords = CONFIG.respectReducedF3.getValue() && this.client.hasReducedDebugInfo();
-
-        return new String[][]{
-                fpsRow,
-                hideCoords ? new String[]{"Time: ", getTime()} : new String[]{getCoords()} ,
-                hideCoords ? null : new String[]{"Time: ", getTime()}
-        };
-    }
-
     private ArrayList<String[]> getText(int fps, int fpsMin){
         String[] fpsRow = CONFIG.displayMinFps.getValue() ?
                 new String[]{String.valueOf(fps), "/", String.valueOf(fpsMin), " fps"} :
@@ -145,14 +129,6 @@ public class CondensedInfoHUD {
         arr.add(new String[]{getCoords()});
         arr.add(new String[]{"Time: ", getTime()});
         return arr;
-    }
-
-    private int[][] getColor(int fps, int fpsMin){
-        return new int[][]{
-                new int[]{getFPSColor(fps), HUD_WHITE, getFPSColor(fpsMin), HUD_WHITE},
-                new int[]{HUD_WHITE},
-                new int[]{HUD_WHITE, getTimeColor()}
-        };
     }
 
     private ArrayList<int[]> getColors(int fps, int fpsMin){
@@ -174,22 +150,5 @@ public class CondensedInfoHUD {
         TICK,
         HR24,
         HR12
-    }
-
-    public enum CoordRounding{
-        INTEGER(0),
-        ONE_DIGIT(1),
-        TWO_DIGITS(2),
-        THREE_DIGITS(3);
-
-        private final int decimalDigits;
-
-        CoordRounding(int decimalDigits){
-            this.decimalDigits = decimalDigits;
-        }
-
-        public int getDigits(){
-            return decimalDigits;
-        }
     }
 }
