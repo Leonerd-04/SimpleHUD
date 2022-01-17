@@ -12,6 +12,8 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.DoubleOption;
 import net.minecraft.client.option.Option;
 import net.minecraft.text.TranslatableText;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -40,6 +42,7 @@ public class SimpleHUDConfig {
 
     private final static Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static File file;
+    private static final Logger LOGGER = LogManager.getLogger();
 
     //Returns a config with default values
     public SimpleHUDConfig(){
@@ -55,7 +58,7 @@ public class SimpleHUDConfig {
     public SimpleHUDConfig(ConfigFileFormat format){
         this();
         if(format == null) {
-            SimpleHUD.LOGGER.error("Config file not read properly; Reverting to default values");
+            LOGGER.error("Config file not read properly; Reverting to default values");
             return;
         }
 
@@ -80,7 +83,7 @@ public class SimpleHUDConfig {
 
     //Tries to load a config file; reverts to default values if not found
     public static SimpleHUDConfig load(){
-        SimpleHUD.LOGGER.info("Loading SimpleHUD configuration file");
+        LOGGER.info("Loading SimpleHUD configuration file");
         prepareConfigFile();
         ConfigFileFormat format;
         try{
@@ -92,7 +95,7 @@ public class SimpleHUDConfig {
             format = GSON.fromJson(reader, ConfigFileFormat.class);
 
         } catch (FileNotFoundException | JsonSyntaxException e) {
-            SimpleHUD.LOGGER.error("Config file failed to load; Reverting to default values");
+            LOGGER.error("Config file failed to load; Reverting to default values");
             e.printStackTrace();
             return new SimpleHUDConfig();
         }
@@ -105,12 +108,12 @@ public class SimpleHUDConfig {
         prepareConfigFile();
         String json = GSON.toJson(this.formatForStorage());
 
-        SimpleHUD.LOGGER.info("Saving config file");
+        LOGGER.info("Saving config file");
 
         try (FileWriter fileWriter = new FileWriter(file)) {
             fileWriter.write(json);
         } catch (IOException e) {
-            SimpleHUD.LOGGER.error("Failed to save config file");
+            LOGGER.error("Failed to save config file");
             e.printStackTrace();
         }
     }

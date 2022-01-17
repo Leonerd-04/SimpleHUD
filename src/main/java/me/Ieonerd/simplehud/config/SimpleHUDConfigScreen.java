@@ -1,6 +1,5 @@
 package me.Ieonerd.simplehud.config;
 
-import com.terraformersmc.modmenu.config.option.OptionConvertable;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
