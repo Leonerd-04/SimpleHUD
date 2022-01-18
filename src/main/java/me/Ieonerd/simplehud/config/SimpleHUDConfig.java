@@ -67,6 +67,7 @@ public class SimpleHUDConfig {
         indicateCanSleep.setValue(format.indicateCanSleep);
         indicateLowFps.setValue(format.indicateLowFps);
         displayMinFps.setValue(format.displayMinFps);
+        respectReducedF3.setValue(format.respectReducedF3);
     }
 
     //Formats the game's config as another class that is easily stored
