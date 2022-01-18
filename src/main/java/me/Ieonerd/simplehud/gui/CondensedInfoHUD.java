@@ -46,8 +46,10 @@ public class CondensedInfoHUD {
     }
 
     //Renders an array of strings as a row in the HUD
+    //colors is allowed to be shorter than row.
+    //If this happens, the last color in the array of colors will be used to render the rest of the row.
     private void renderRow(MatrixStack matrices, int height, String[] row, int[] colors){
-        int position = 0;
+        int position = 0; //Stores the position to render a particular string in the row
         String str;
         int color = colors[0];
         for(int i = 0; i < row.length; i++){
@@ -61,6 +63,7 @@ public class CondensedInfoHUD {
 
     //Gets the minimum fps over the last 240 frames by finding the largest frame time
     //Good indicator of stuttering at higher fps
+    //It will be colored in the same way as average fps
     private int getMinFps(){
         long max = 0;
         long[] fpsData = this.client.getMetricsData().getSamples(); //Fps data is in nanoseconds per frame
@@ -68,7 +71,10 @@ public class CondensedInfoHUD {
         return (int)(1000000000.0 / max);
     }
 
-    //Changes the fps display's color when fps goes below 60
+    //Changes the fps display's color
+    //>60 fps -> white
+    //30-59 fps -> yellow
+    //<20 fps -> red
     private int getFPSColor(int fps){
         if(!CONFIG.indicateLowFps.getValue()) return HUD_WHITE;
         if(fps < 30) return FPS_RED;
@@ -76,6 +82,7 @@ public class CondensedInfoHUD {
         return HUD_WHITE;
     }
 
+    //Formats a string for coordinates
     private String getCoords(){
         Vec3d position = this.client.getCameraEntity().getPos();
         int round = (int) CONFIG.coordsRounding.get(client.options);
@@ -86,6 +93,7 @@ public class CondensedInfoHUD {
         return String.format(Locale.ROOT, placeDigits, position.getX(), position.getY(), position.getZ());
     }
 
+    //Formats a string for the time display
     private String getTime(){
         long time = this.client.world.getTimeOfDay(); //time = ticks since the world started
         Clock setting = CONFIG.clockMode.getValue();
@@ -102,17 +110,21 @@ public class CondensedInfoHUD {
         return String.format(Locale.ROOT, "%2d:%02d %s",  hr, min, ampm); //12 hr AM PM clock
     }
 
-    //Changes the clock display's color to tell the player they can sleep
+    //Changes the clock display's color to tell the player that they can sleep
+    //It will only turn green whenever it's either thundering, or it's nighttime,
+    //and ignores other things like nearby monsters.
     private int getTimeColor(){
         if(!CONFIG.indicateCanSleep.getValue()) return HUD_WHITE;
 
-        long time = this.client.world.getTimeOfDay() % 24000; //time = ticks since the world started
+        long time = this.client.world.getTimeOfDay() % 24000; //time is equal to /time query daytime
         if(this.client.world.isThundering() || (time > 12541 && time < 23460)) return SLEEP_GREEN;
 
         return HUD_WHITE;
     }
 
+    //Formats an ArrayList of String[] for the renderer
     private ArrayList<String[]> getText(int fps, int fpsMin){
+        //Fps is displayed like in Optifine, with a slash between average and minimum fps
         String[] fpsRow = CONFIG.displayMinFps.getValue() ?
                 new String[]{String.valueOf(fps), "/", String.valueOf(fpsMin), " fps"} :
                 new String[]{String.valueOf(fps), " fps"};
@@ -121,6 +133,7 @@ public class CondensedInfoHUD {
 
         arr.add(fpsRow);
 
+        //respectReducedF3 hides coordinates if the world has the gamerule toggled on
         if(CONFIG.respectReducedF3.getValue() && this.client.hasReducedDebugInfo()){
             arr.add(new String[]{"Time: ", getTime()});
             return arr;
@@ -131,6 +144,7 @@ public class CondensedInfoHUD {
         return arr;
     }
 
+    //Formats an ArrayList of int[] for the renderer's colors
     private ArrayList<int[]> getColors(int fps, int fpsMin){
         ArrayList<int[]> arr = new ArrayList<>();
 

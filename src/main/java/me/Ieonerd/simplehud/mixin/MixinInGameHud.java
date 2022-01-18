@@ -21,11 +21,15 @@ public class MixinInGameHud extends DrawableHelper {
     @Shadow @Final private MinecraftClient client;
     CondensedInfoHUD simpleHUD;
 
+    //Adds a CondensedInfoHUD object to the InGameHud object used by the client
     @Inject(method = "<init>", at = @At("TAIL"))
     public void addSimpleHudToHUD(MinecraftClient client, CallbackInfo ci){
         simpleHUD = new CondensedInfoHUD(client);
     }
 
+    //Renders the mod's HUD whenever the render() method for the vanilla InGameHud is called
+    //It is rendered last, so it would appear above anything that the vanilla HUD would render.
+    //It only renders when the F3 menu is closed.
     @Inject(method = "render", at = @At("TAIL"))
     public void renderSimpleHud(MatrixStack matrices, float tickDelta, CallbackInfo ci){
         if(!this.client.options.debugEnabled) simpleHUD.render(matrices);

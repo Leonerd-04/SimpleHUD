@@ -19,7 +19,7 @@ import java.io.*;
 import java.util.ArrayList;
 
 //Handles config, including storage, for this mod
-//I figured out a lot of this code by looking at the implementation in Mod Menu.
+//I figured out a lot of this code by looking at the implementation in Mod Menu
 //Credit to TerraformersMC, though I didn't use their code verbatim
 public class SimpleHUDConfig {
     public int coordinateRounding = 3;
@@ -29,6 +29,7 @@ public class SimpleHUDConfig {
     public final BooleanConfigOption displayMinFps = new BooleanConfigOption("fps_min", true);
     public final BooleanConfigOption respectReducedF3 = new BooleanConfigOption("respect_reduced_f3", false);
 
+    //Using DoubleOption lets me use a slider
     public final DoubleOption coordsRounding = new DoubleOption("option.modmenu.coords", 0.0, 6.0, 1.0F,
             gameOptions -> (double) coordinateRounding, //getter for the coordinate rounding
             (gameOptions, rounding) -> coordinateRounding = (int) rounding.doubleValue(), //setter for the coordinate rounding
