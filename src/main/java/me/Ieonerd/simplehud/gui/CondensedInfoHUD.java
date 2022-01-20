@@ -11,6 +11,7 @@ import java.util.Objects;
 
 import static me.Ieonerd.simplehud.config.SimpleHUDConfigScreen.CONFIG;
 
+//Handles the rendering of SimpleHUD
 public class CondensedInfoHUD {
     MinecraftClient client;
     private static final int HUD_WHITE = 0xE0E0E0; //Color of the F3 HUD text
@@ -98,15 +99,19 @@ public class CondensedInfoHUD {
         long time = this.client.world.getTimeOfDay(); //time = ticks since the world started
         Clock setting = CONFIG.clockMode.getValue();
 
-        if(setting == Clock.TICK) return String.format(Locale.ROOT, "%d",time % 24000); //Ticked clock, like /time query daytime
+        if(setting == Clock.TICK)
+            return String.format(Locale.ROOT, "%d",time % 24000); //Ticked clock, like /time query daytime
 
         int hr = (int) (time + 6000) / 1000 % 24;
         int min = (int) ((time % 1000) * 0.06);
-        if(setting == Clock.HR24) return String.format(Locale.ROOT, "%02d:%02d", hr, min); //24 hr clock
+
+        if(setting == Clock.HR24)
+            return String.format(Locale.ROOT, "%02d:%02d", hr, min); //24 hr clock
 
         String ampm = hr > 11 ? "PM" : "AM";
         hr = hr % 12;
         if(hr == 0) hr = 12;
+
         return String.format(Locale.ROOT, "%2d:%02d %s",  hr, min, ampm); //12 hr AM PM clock
     }
 
