@@ -74,7 +74,7 @@ public class CondensedInfoHUD {
     //Changes the fps display's color
     //>60 fps -> white
     //30-59 fps -> yellow
-    //<20 fps -> red
+    //<30 fps -> red
     private int getFPSColor(int fps){
         if(!CONFIG.indicateLowFps.getValue()) return HUD_WHITE;
         if(fps < 30) return FPS_RED;
