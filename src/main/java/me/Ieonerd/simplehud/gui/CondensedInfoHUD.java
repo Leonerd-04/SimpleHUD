@@ -138,11 +138,9 @@ public class CondensedInfoHUD {
 
         arr.add(fpsRow);
 
-        //respectReducedF3 hides coordinates if the world has the gamerule toggled on
-        if(CONFIG.respectReducedF3.getValue() && this.client.hasReducedDebugInfo()){
-            arr.add(new String[]{"Time: ", getTime()});
-            return arr;
-        }
+        //respectReducedF3 hides coordinates and time if the server has the gamerule toggled on
+        if(CONFIG.respectReducedF3.getValue() && this.client.hasReducedDebugInfo()) return arr;
+
 
         arr.add(new String[]{getCoords()});
         arr.add(new String[]{"Time: ", getTime()});
@@ -154,12 +152,6 @@ public class CondensedInfoHUD {
         ArrayList<int[]> arr = new ArrayList<>();
 
         arr.add(new int[]{getFPSColor(fps), HUD_WHITE, getFPSColor(fpsMin), HUD_WHITE});
-
-        if(CONFIG.respectReducedF3.getValue() && this.client.hasReducedDebugInfo()){
-            arr.add(new int[]{HUD_WHITE, getTimeColor()});
-            return arr;
-        }
-
         arr.add(new int[]{HUD_WHITE});
         arr.add(new int[]{HUD_WHITE, getTimeColor()});
         return arr;
