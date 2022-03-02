@@ -11,6 +11,8 @@ import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.option.Option;
 import net.minecraft.text.Text;
 
+//Handles the screen that appears when using ModMenu
+//I'd like to credit TerraformersMC again, as this code is from the Config in ModMenu
 @Environment(EnvType.CLIENT)
 public class SimpleHUDConfigScreen extends GameOptionsScreen {
     private ButtonListWidget buttonList;
