@@ -14,7 +14,7 @@ Besides just displaying this information, the color of the HUD itself acts as an
 - The fps color changes to indicate low framerates
 - The color of the clock changes to indicate when the player can sleep
 
-##Compatibility
+## Compatibility
 SimpleHUD only adds a rendering call to Minecraft's code, so it should generally be completely compatible with other mods.
 Most notably, it is compatible with Sodium, Iris, and BetterF3.
 
@@ -24,7 +24,7 @@ To remedy this, I want to add the ability for the user to choose the HUD's posit
 
 If you find an incompatibility with another mod, open an issue and I'll add it to a list of incompatibilities (currently empty).
 
-##Goals
+## Goals
 In the future I'd like to add more information to the HUD.
 I see how this could cause clutter though, so I also want to let the user choose what information
 the HUD displays, as well as in what order. As mentioned before, I'd also like to add positioning.
