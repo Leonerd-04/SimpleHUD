@@ -1,9 +1,30 @@
-# Fabric Example Mod
+# SimpleHUD
+SimpleHUD is a mod that adds a minimal, informational display to Minecraft's in game HUD, as a supplement to the F3 menu.
+It eliminates the need to have the F3 menu open to check coordinates and framerates.
 
-## Setup
+It is recommended to use this mod with TerraformersMC's ModMenu to gain access to config options.
 
-For setup instructions please see the [fabric wiki page](https://fabricmc.net/wiki/tutorial:setup) that relates to the IDE that you are using.
+## The HUD
+SimpleHUD, as of now, displays the following:
+- Average framerate and minimum framerate
+- Coordinates
+- Time
 
-## License
+Besides just displaying this information, the color of the HUD itself acts as an indicator:
+- The fps color changes to indicate low framerates
+- The color of the clock changes to indicate when the player can sleep
 
-This template is available under the CC0 license. Feel free to learn from it and incorporate it in your own projects.
+##Compatibility
+SimpleHUD only adds a rendering call to Minecraft's code, so it should generally be completely compatible with other mods.
+Most notably, it is compatible with Sodium and Iris.
+
+While this mod is highly unlikely to break another mod in any way,
+the HUD may end up obscuring or being obscured by other mods that add their own HUDs to Minecraft.
+To remedy this, I want to add the ability for the user to choose the HUD's position. 
+
+If you find an incompatibility with another mod, open an issue and I'll add it to a list of incompatibilities (currently empty).
+
+##Goals
+This mod is currently in its alpha stage. In the future I'd like to add more information to the HUD.
+I see how this could easily cause clutter though, so I also want to let the user choose what information
+the HUD displays, as well as in what order. As mentioned before, I'd also like to add positioning.
