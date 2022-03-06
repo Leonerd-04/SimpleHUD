@@ -6,11 +6,11 @@
   "name": "SimpleHUD",
   "description": "Adds a simple, informational display to Minecraft",
   "authors": [
-    "Ieonerd"
+    "Ieonerd04"
   ],
   "contact": {
     "homepage": "",
-    "sources": ""
+    "sources": "https://github.com/Leonerd-04/SimpleHUD"
   },
 
   "license": "CC0-1.0",
