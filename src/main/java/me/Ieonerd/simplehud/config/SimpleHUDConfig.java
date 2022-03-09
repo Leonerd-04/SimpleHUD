@@ -73,8 +73,7 @@ public class SimpleHUDConfig {
 
     //Formats the game's config as another class that is easily stored
     private ConfigFileFormat formatForStorage(){
-        return new ConfigFileFormat(clockMode.getValue(), (int) coordsRounding.get(MinecraftClient.getInstance().options),
-                indicateCanSleep.getValue(), indicateLowFps.getValue(), displayMinFps.getValue(), respectReducedF3.getValue());
+        return new ConfigFileFormat(this);
     }
 
     //Checks if the config file has the correct path
@@ -129,14 +128,13 @@ public class SimpleHUDConfig {
         boolean displayMinFps;
         boolean respectReducedF3;
 
-        private ConfigFileFormat(CondensedInfoHUD.Clock clockMode, int coordRounding,
-                                 boolean indicateCanSleep, boolean indicateLowFps, boolean displayMinFps, boolean respectReducedF3){
-            this.clockMode = clockMode;
-            this.coordRounding = coordRounding;
-            this.indicateCanSleep = indicateCanSleep;
-            this.indicateLowFps = indicateLowFps;
-            this.displayMinFps = displayMinFps;
-            this.respectReducedF3 = respectReducedF3;
+        private ConfigFileFormat(SimpleHUDConfig config){
+            this.clockMode = config.clockMode.getValue();
+            this.coordRounding = (int) config.coordsRounding.get(MinecraftClient.getInstance().options);
+            this.indicateCanSleep = config.indicateCanSleep.getValue();
+            this.indicateLowFps = config.indicateLowFps.getValue();
+            this.displayMinFps = config.displayMinFps.getValue();
+            this.respectReducedF3 = config.respectReducedF3.getValue();
         }
     }
 
