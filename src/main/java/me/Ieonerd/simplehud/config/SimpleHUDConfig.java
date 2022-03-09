@@ -6,7 +6,7 @@ import com.google.gson.JsonSyntaxException;
 import com.terraformersmc.modmenu.config.option.BooleanConfigOption;
 import com.terraformersmc.modmenu.config.option.EnumConfigOption;
 import me.Ieonerd.simplehud.SimpleHUD;
-import me.Ieonerd.simplehud.gui.CondensedInfoHUD;
+import me.Ieonerd.simplehud.gui.SimpleHUDDisplay;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.DoubleOption;
@@ -23,7 +23,7 @@ import java.util.ArrayList;
 //Credit to TerraformersMC, though I didn't use their code verbatim
 public class SimpleHUDConfig {
     public int coordinateRounding = 3;
-    public final EnumConfigOption<CondensedInfoHUD.Clock> clockMode = new EnumConfigOption<>("clock", CondensedInfoHUD.Clock.HR24);
+    public final EnumConfigOption<SimpleHUDDisplay.Clock> clockMode = new EnumConfigOption<>("clock", SimpleHUDDisplay.Clock.HR24);
     public final BooleanConfigOption indicateCanSleep = new BooleanConfigOption("sleep_indicator", true);
     public final BooleanConfigOption indicateLowFps = new BooleanConfigOption("low_fps", true);
     public final BooleanConfigOption displayMinFps = new BooleanConfigOption("fps_min", true);
@@ -121,7 +121,7 @@ public class SimpleHUDConfig {
 
     //Class that is used to store config as a json
     private static class ConfigFileFormat {
-        CondensedInfoHUD.Clock clockMode;
+        SimpleHUDDisplay.Clock clockMode;
         int coordRounding;
         boolean indicateCanSleep;
         boolean indicateLowFps;

@@ -12,14 +12,14 @@ import java.util.Objects;
 import static me.Ieonerd.simplehud.config.SimpleHUDConfigScreen.CONFIG;
 
 //Handles the rendering of SimpleHUD
-public class CondensedInfoHUD {
+public class SimpleHUDDisplay {
     MinecraftClient client;
     private static final int HUD_WHITE = 0xE0E0E0; //Color of the F3 HUD text
     private static final int SLEEP_GREEN = 0x40D646;
     private static final int FPS_YELLOW = 0xFFFF45;
     private static final int FPS_RED = 0xF48282;
 
-    public CondensedInfoHUD(MinecraftClient client){
+    public SimpleHUDDisplay(MinecraftClient client){
         this.client = client;
     }
 

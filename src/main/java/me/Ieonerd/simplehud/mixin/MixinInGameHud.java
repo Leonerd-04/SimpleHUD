@@ -1,6 +1,6 @@
 package me.Ieonerd.simplehud.mixin;
 
-import me.Ieonerd.simplehud.gui.CondensedInfoHUD;
+import me.Ieonerd.simplehud.gui.SimpleHUDDisplay;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
@@ -19,12 +19,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MixinInGameHud extends DrawableHelper {
 
     @Shadow @Final private MinecraftClient client;
-    CondensedInfoHUD simpleHUD;
+    SimpleHUDDisplay simpleHUD;
 
     //Adds a CondensedInfoHUD object to the InGameHud object used by the client
     @Inject(method = "<init>", at = @At("TAIL"))
     public void addSimpleHudToHUD(MinecraftClient client, CallbackInfo ci){
-        simpleHUD = new CondensedInfoHUD(client);
+        simpleHUD = new SimpleHUDDisplay(client);
     }
 
     //Renders the mod's HUD whenever the render() method for the vanilla InGameHud is called
