@@ -2,6 +2,7 @@ package me.Ieonerd.simplehud.gui;
 
 import me.Ieonerd.simplehud.mixin.MinecraftClientAccessor;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.Vec3d;
 
@@ -15,6 +16,7 @@ import static me.Ieonerd.simplehud.config.SimpleHUDConfigScreen.CONFIG;
 public class SimpleHUDDisplay {
     MinecraftClient client;
     private static final int HUD_WHITE = 0xE0E0E0; //Color of the F3 HUD text
+    private static final int HUD_BACKGROUND = 0x90505050; //Color of the F3 HUD background
     private static final int SLEEP_GREEN = 0x40D646;
     private static final int FPS_YELLOW = 0xFFFF45;
     private static final int FPS_RED = 0xF48282;
@@ -53,6 +55,12 @@ public class SimpleHUDDisplay {
         int position = 0; //Stores the position to render a particular string in the row
         String str;
         int color = colors[0];
+
+        for(String string : row) position += this.client.textRenderer.getWidth(string);
+
+        DrawableHelper.fill(matrices, 1, height - 1, 3 + position, height + 8, HUD_BACKGROUND);
+        position = 0;
+
         for(int i = 0; i < row.length; i++){
             str = row[i];
             if(i < colors.length) color = colors[i];
