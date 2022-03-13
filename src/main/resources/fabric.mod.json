@@ -13,7 +13,7 @@
     "sources": "https://github.com/Leonerd-04/SimpleHUD"
   },
 
-  "license": "CC0-1.0",
+  "license": "GPLv3",
   "icon": "assets/simplehud/icon.png",
 
   "environment": "client",
