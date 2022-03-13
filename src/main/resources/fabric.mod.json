@@ -4,7 +4,7 @@
   "version": "${version}",
 
   "name": "SimpleHUD",
-  "description": "mod.json.description",
+  "description": "A simple, informational display for Minecraft",
   "authors": [
     "Ieonerd04"
   ],
@@ -35,5 +35,11 @@
     "minecraft": ">=1.17",
     "java": ">=16",
     "modmenu": "*"
+  },
+
+  "custom": {
+    "modmenu": {
+      "description": "modmenu.descriptionTranslation.simplehud"
+    }
   }
 }
