@@ -1,4 +1,5 @@
 {
+  "mod.json.description" : "A simple, informational display to Minecraft",
   "option.modmenu.clock" : "Clock Mode",
   "option.modmenu.clock.tick" : "Game Ticks",
   "option.modmenu.clock.hr12" : "AM PM",

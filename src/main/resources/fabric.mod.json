@@ -4,7 +4,7 @@
   "version": "${version}",
 
   "name": "SimpleHUD",
-  "description": "Adds a simple, informational display to Minecraft",
+  "description": "mod.json.description",
   "authors": [
     "Ieonerd04"
   ],
