@@ -4,6 +4,8 @@ import me.Ieonerd.simplehud.mixin.MinecraftClientAccessor;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.math.Vec3d;
 
 import java.util.ArrayList;
@@ -96,9 +98,10 @@ public class SimpleHUDDisplay {
         Vec3d position = this.client.getCameraEntity().getPos();
         int round = (int) CONFIG.coordsRounding.get(client.options);
 
-        //This String.format() will replace %% with % and %d with the number of digits to round to
+        //Formats the first coordinate string with the desired rounding numbers
         String placeDigits = String.format("XYZ: %%.%df, %%.%df, %%.%df", round, round, round);
 
+        //Formats this formatted string again to insert the coordinates, with desired rounding
         return String.format(Locale.ROOT, placeDigits, position.getX(), position.getY(), position.getZ());
     }
 
@@ -120,6 +123,7 @@ public class SimpleHUDDisplay {
         hr = hr % 12;
         if(hr == 0) hr = 12;
 
+        //System.out.println(new TranslatableText("simplehud.hud.time.hr12",  hr, min, ampm).getString());
         return String.format(Locale.ROOT, "%2d:%02d %s",  hr, min, ampm); //12 hr AM PM clock
     }
 
@@ -151,7 +155,7 @@ public class SimpleHUDDisplay {
 
 
         arr.add(new String[]{getCoords()});
-        arr.add(new String[]{"Time: ", getTime()});
+        arr.add(new String[]{new TranslatableText("simplehud.hud.time").getString(), getTime()});
         return arr;
     }
 

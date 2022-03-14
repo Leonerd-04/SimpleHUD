@@ -1,5 +1,6 @@
 {
   "modmenu.descriptionTranslation.simplehud" : "A simple, informational display for Minecraft",
+  "simplehud.hud.time" : "Time: ",
   "option.modmenu.clock" : "Clock Mode",
   "option.modmenu.clock.tick" : "Game Ticks",
   "option.modmenu.clock.hr12" : "AM PM",
