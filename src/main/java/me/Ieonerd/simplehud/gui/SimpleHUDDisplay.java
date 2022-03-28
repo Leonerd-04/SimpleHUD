@@ -4,7 +4,6 @@ import me.Ieonerd.simplehud.mixin.MinecraftClientAccessor;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.math.Vec3d;
 
@@ -105,6 +104,23 @@ public class SimpleHUDDisplay {
         return String.format(Locale.ROOT, placeDigits, position.getX(), position.getY(), position.getZ());
     }
 
+    //Finds the direction the player is facing (North, East, South, West)
+    private String getDirection(){
+        float yaw = this.client.getCameraEntity().getYaw();
+        float v = ((yaw + 45)/90);
+
+        int mode = (int) v % 4;
+        if(v < 0) mode += 3;
+
+        return switch(mode){
+            case 0 -> "S";
+            case 1 -> "W";
+            case 2 -> "N";
+            case 3 -> "E";
+            default -> "?"; //Shouldn't happen, used to identify unintended behavior
+        };
+    }
+
     //Formats a string for the time display
     private String getTime(){
         long time = this.client.world.getTimeOfDay(); //time = ticks since the world started
@@ -154,7 +170,7 @@ public class SimpleHUDDisplay {
         if(CONFIG.respectReducedF3.getValue() && this.client.hasReducedDebugInfo()) return arr;
 
 
-        arr.add(new String[]{getCoords()});
+        arr.add(new String[]{getCoords(), " ", getDirection()});
         arr.add(new String[]{new TranslatableText("simplehud.hud.time").getString(), getTime()});
         return arr;
     }
