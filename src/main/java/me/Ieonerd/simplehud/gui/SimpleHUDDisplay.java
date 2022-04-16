@@ -16,6 +16,7 @@ import static me.Ieonerd.simplehud.config.SimpleHUDConfigScreen.CONFIG;
 //Handles the rendering of SimpleHUD
 public class SimpleHUDDisplay {
     MinecraftClient client;
+    private static int minFps;
     private static final int HUD_WHITE = 0xE0E0E0; //Color of the F3 HUD text
     private static final int HUD_BACKGROUND = 0x90505050; //Color of the F3 HUD background
     private static final int SLEEP_GREEN = 0x40D646;
@@ -31,7 +32,6 @@ public class SimpleHUDDisplay {
     //To allow for individual sections of a given row to be different colors.
     public void render(MatrixStack matrices){
         int fps = MinecraftClientAccessor.getCurrentFPS();
-        int minFps = getMinFps();
         ArrayList<String[]> text = this.getText(fps, minFps);
         ArrayList<int[]> colors = getColors(fps, minFps);
         String[] row;
@@ -71,14 +71,9 @@ public class SimpleHUDDisplay {
         }
     }
 
-    //Gets the minimum fps over the last 240 frames by finding the largest frame time
-    //Good indicator of stuttering at higher fps
-    //It will be colored in the same way as average fps
-    private int getMinFps(){
-        long max = 0;
-        long[] fpsData = this.client.getMetricsData().getSamples(); //Fps data is in nanoseconds per frame
-        for(long fps : fpsData) max = Math.max(max, fps);
-        return (int)(1000000000.0 / max);
+    //Allows the minimum fps method to be updated by the MinecraftClientMixin
+    public static void setMinFps(int x){
+        minFps = x;
     }
 
     //Changes the fps display's color
