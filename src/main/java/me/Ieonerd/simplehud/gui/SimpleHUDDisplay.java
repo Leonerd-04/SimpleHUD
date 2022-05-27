@@ -19,7 +19,7 @@ public class SimpleHUDDisplay {
     private static int minFps;
     private static final int HUD_WHITE = 0xE0E0E0; //Color of the F3 HUD text
     private static final int HUD_BACKGROUND = 0x90505050; //Color of the F3 HUD background
-    private static final int SLEEP_GREEN = 0x40D646;
+    private static final int SLEEP_GREEN = 0x56E65A;
     private static final int FPS_YELLOW = 0xFFFF45;
     private static final int FPS_RED = 0xF48282;
 
