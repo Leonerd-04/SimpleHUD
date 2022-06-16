@@ -1,17 +1,21 @@
 package me.Ieonerd.simplehud.config;
 
+import me.Ieonerd.simplehud.SimpleHUD;
+import me.Ieonerd.simplehud.gui.SimpleHUDDisplay;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import com.terraformersmc.modmenu.config.option.BooleanConfigOption;
 import com.terraformersmc.modmenu.config.option.EnumConfigOption;
-import me.Ieonerd.simplehud.SimpleHUD;
-import me.Ieonerd.simplehud.gui.SimpleHUDDisplay;
+
 import net.fabricmc.loader.api.FabricLoader;
+
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.DoubleOption;
 import net.minecraft.client.option.Option;
 import net.minecraft.text.TranslatableText;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

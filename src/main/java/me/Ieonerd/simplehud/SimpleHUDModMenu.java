@@ -1,8 +1,10 @@
 package me.Ieonerd.simplehud;
 
+import me.Ieonerd.simplehud.config.SimpleHUDConfigScreen;
+
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
-import me.Ieonerd.simplehud.config.SimpleHUDConfigScreen;
+
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 

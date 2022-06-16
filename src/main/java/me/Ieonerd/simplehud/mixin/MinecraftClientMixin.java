@@ -1,8 +1,10 @@
 package me.Ieonerd.simplehud.mixin;
 
 import me.Ieonerd.simplehud.gui.SimpleHUDDisplay;
+
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.MetricsData;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
