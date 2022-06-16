@@ -12,6 +12,8 @@ import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.option.Option;
 import net.minecraft.text.Text;
 
+import static me.Ieonerd.simplehud.config.SimpleHUDConfig.OPTIONS;
+
 //Handles the screen that appears when using ModMenu
 //I'd like to credit TerraformersMC again, as this code is from the Config in ModMenu
 @Environment(EnvType.CLIENT)
@@ -25,7 +27,7 @@ public class SimpleHUDConfigScreen extends GameOptionsScreen {
 
     protected void init(){
         buttonList = new ButtonListWidget(this.client, this.width, this.height, 32, this.height - 32, 25);
-        for(Option option : CONFIG.options) buttonList.addSingleOptionEntry(option);
+        for(Option option : OPTIONS) buttonList.addSingleOptionEntry(option);
         this.addDrawableChild(buttonList);
 
         this.addDrawableChild(new ButtonWidget(this.width / 2 - 100, this.height - 27, 200, 20, ScreenTexts.DONE, (button) -> {

@@ -1,7 +1,6 @@
 package me.Ieonerd.simplehud;
 
 import me.Ieonerd.simplehud.config.SimpleHUDConfig;
-import me.Ieonerd.simplehud.config.SimpleHUDConfigScreen;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
@@ -17,6 +16,6 @@ public class SimpleHUD implements ClientModInitializer {
 
 	@Override
 	public void onInitializeClient() {
-		SimpleHUDConfigScreen.CONFIG = SimpleHUDConfig.load();
+		SimpleHUDConfig.load();
 	}
 }

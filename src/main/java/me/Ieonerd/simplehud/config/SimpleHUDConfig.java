@@ -1,17 +1,16 @@
 package me.Ieonerd.simplehud.config;
 
+import com.google.common.reflect.TypeToken;
 import me.Ieonerd.simplehud.SimpleHUD;
 import me.Ieonerd.simplehud.gui.SimpleHUDDisplay;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
-import com.terraformersmc.modmenu.config.option.BooleanConfigOption;
-import com.terraformersmc.modmenu.config.option.EnumConfigOption;
 
 import net.fabricmc.loader.api.FabricLoader;
 
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.option.CyclingOption;
 import net.minecraft.client.option.DoubleOption;
 import net.minecraft.client.option.Option;
 import net.minecraft.text.TranslatableText;
@@ -20,65 +19,30 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.*;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 //Handles config, including storage, for this mod
 //I figured out a lot of this code by looking at the implementation in Mod Menu
 //Credit to TerraformersMC, though I didn't use their code verbatim
 public class SimpleHUDConfig {
-    public int coordinateRounding = 3;
-    public final EnumConfigOption<SimpleHUDDisplay.Clock> clockMode = new EnumConfigOption<>("clock", SimpleHUDDisplay.Clock.HR24);
-    public final BooleanConfigOption indicateCanSleep = new BooleanConfigOption("sleep_indicator", true);
-    public final BooleanConfigOption indicateLowFps = new BooleanConfigOption("low_fps", true);
-    public final BooleanConfigOption displayMinFps = new BooleanConfigOption("fps_min", true);
-    public final BooleanConfigOption respectReducedF3 = new BooleanConfigOption("respect_reduced_f3", false);
+    private static CyclingOption<SimpleHUDDisplay.Clock> clockMode;
+    private static CyclingOption<Boolean> indicateCanSleep;
+    private static CyclingOption<Boolean> indicateLowFps;
+    private static CyclingOption<Boolean> displayMinFps;
+    private static CyclingOption<Boolean> respectReducedF3;
 
     //Using DoubleOption lets me use a slider
-    public final DoubleOption coordsRounding = new DoubleOption("option.modmenu.coords", 0.0, 6.0, 1.0F,
-            gameOptions -> (double) coordinateRounding, //getter for the coordinate rounding
-            (gameOptions, rounding) -> coordinateRounding = (int) rounding.doubleValue(), //setter for the coordinate rounding
-            (gameOptions, option) -> {
-                TranslatableText valueKey = new TranslatableText(String.format("option.modmenu.coords.%d", coordinateRounding));
-                return new TranslatableText("option.modmenu.coords", valueKey); //getter for the display text
-            }
-    );
+    private static DoubleOption coordsRounding;
 
-    public final ArrayList<Option> options = new ArrayList<>();
+    public static ArrayList<Option> OPTIONS;
+    private static HashMap<String, String> MAP;
 
+    private final static Type MAP_TYPE = new TypeToken<HashMap<String, String>>() {}.getType();
     private final static Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static File file;
     private static final Logger LOGGER = LogManager.getLogger();
-
-    //Returns a config with default values
-    public SimpleHUDConfig(){
-        options.add(clockMode.asOption());
-        options.add(coordsRounding);
-        options.add(indicateCanSleep.asOption());
-        options.add(indicateLowFps.asOption());
-        options.add(displayMinFps.asOption());
-        options.add(respectReducedF3.asOption());
-    }
-
-    //Returns a config with values read from a json
-    public SimpleHUDConfig(ConfigFileFormat format){
-        this();
-        if(format == null) {
-            LOGGER.error("Config file not read properly; Reverting to default values");
-            return;
-        }
-
-        clockMode.setValue(format.clockMode);
-        coordsRounding.set(MinecraftClient.getInstance().options, format.coordRounding);
-        indicateCanSleep.setValue(format.indicateCanSleep);
-        indicateLowFps.setValue(format.indicateLowFps);
-        displayMinFps.setValue(format.displayMinFps);
-        respectReducedF3.setValue(format.respectReducedF3);
-    }
-
-    //Formats the game's config as another class that is easily stored
-    private ConfigFileFormat formatForStorage(){
-        return new ConfigFileFormat(this);
-    }
 
     //Checks if the config file has the correct path
     private static void prepareConfigFile(){
@@ -87,31 +51,36 @@ public class SimpleHUDConfig {
     }
 
     //Tries to load a config file; reverts to default values if not found
-    public static SimpleHUDConfig load(){
+    public static void load(){
+        MAP = new HashMap<>();
+        OPTIONS = new ArrayList<>();
+
+        clockMode = createEnumOption("clockMode","simplehud.config.clock", SimpleHUDDisplay.Clock.HR24);
+        indicateCanSleep = createBoolOption("indicateCanSleep", "simplehud.config.sleep_indicator", true);
+        indicateLowFps = createBoolOption("indicateLowFps","simplehud.config.low_fps", true);
+        displayMinFps = createBoolOption("displayMinFps", "simplehud.config.fps_min", true);
+        respectReducedF3 = createBoolOption("respectReducedF3", "simplehud.config.respect_reduced_f3", false);
+        coordsRounding = createIntOption("coordRounding", "simplehud.config.coords", 3, 0, 6);
+
         LOGGER.info("Loading SimpleHUD configuration file");
         prepareConfigFile();
-        ConfigFileFormat format;
+
         try{
             if(!file.exists()) {
-                SimpleHUDConfigScreen.CONFIG = new SimpleHUDConfig();
-                SimpleHUDConfigScreen.CONFIG.save();
+                save();
             }
             FileReader reader = new FileReader(file);
-            format = GSON.fromJson(reader, ConfigFileFormat.class);
-
+            MAP = GSON.fromJson(reader, MAP_TYPE);
         } catch (FileNotFoundException | JsonSyntaxException e) {
             LOGGER.error("Config file failed to load; Reverting to default values");
             e.printStackTrace();
-            return new SimpleHUDConfig();
         }
-
-        return new SimpleHUDConfig(format);
     }
 
     //Tries to save the config file
-    public void save(){
+    public static void save(){
         prepareConfigFile();
-        String json = GSON.toJson(this.formatForStorage());
+        String json = GSON.toJson(MAP, MAP_TYPE);
 
         LOGGER.info("Saving config file");
 
@@ -123,23 +92,61 @@ public class SimpleHUDConfig {
         }
     }
 
-    //Class that is used to store config as a json
-    private static class ConfigFileFormat {
-        SimpleHUDDisplay.Clock clockMode;
-        int coordRounding;
-        boolean indicateCanSleep;
-        boolean indicateLowFps;
-        boolean displayMinFps;
-        boolean respectReducedF3;
 
-        private ConfigFileFormat(SimpleHUDConfig config){
-            this.clockMode = config.clockMode.getValue();
-            this.coordRounding = (int) config.coordsRounding.get(MinecraftClient.getInstance().options);
-            this.indicateCanSleep = config.indicateCanSleep.getValue();
-            this.indicateLowFps = config.indicateLowFps.getValue();
-            this.displayMinFps = config.displayMinFps.getValue();
-            this.respectReducedF3 = config.respectReducedF3.getValue();
-        }
+    public static boolean getBoolConfigValue(String key){
+        return Boolean.parseBoolean(MAP.get(key));
     }
 
+    public static int getIntConfigValue(String key){
+        return Integer.parseInt(MAP.get(key));
+    }
+
+    public static String getConfigValue(String key){
+        return MAP.get(key);
+    }
+
+
+    private static CyclingOption<Boolean> createBoolOption(String hashKey, String translationKey, boolean defaultVal){
+        MAP.put(hashKey, String.valueOf(defaultVal));
+
+        CyclingOption<Boolean> option = CyclingOption.create(
+                translationKey,
+                ignored -> Boolean.parseBoolean(MAP.get(hashKey)),
+                (ignored, ignored2, newVal) -> MAP.put(hashKey, String.valueOf(newVal))
+        );
+
+        OPTIONS.add(option);
+        return option;
+    }
+
+    private static DoubleOption createIntOption(String hashKey, String translationKey, int defaultVal, int min, int max){
+        MAP.put(hashKey, String.valueOf(defaultVal));
+
+        DoubleOption option = new DoubleOption(translationKey, min, max, 1.0F,
+                ignored -> (double) Integer.parseInt(MAP.get(hashKey)),
+                (ignored, newVal) -> MAP.put(hashKey, String.valueOf(newVal.intValue())),
+                (ignored, ignored2) -> {
+                    TranslatableText valueKey = new TranslatableText(String.format(translationKey + ".%d", Integer.valueOf(MAP.get(hashKey))));
+                    return new TranslatableText(translationKey, valueKey);
+                }
+        );
+
+        OPTIONS.add(option);
+        return option;
+    }
+
+    private static <E extends Enum<E>> CyclingOption<E> createEnumOption(String hashKey, String translationKey, E defaultVal){
+        MAP.put(hashKey, defaultVal.name());
+
+        CyclingOption<E> option = CyclingOption.create(
+                translationKey,
+                defaultVal.getDeclaringClass().getEnumConstants(),
+                value -> new TranslatableText(translationKey + "." + value.name().toLowerCase()),
+                ignored -> Enum.valueOf(defaultVal.getDeclaringClass(), MAP.get(hashKey)),
+                (ignored, ignored2, value) -> MAP.put(hashKey, value.name())
+        );
+
+        OPTIONS.add(option);
+        return option;
+    }
 }

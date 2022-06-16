@@ -1,5 +1,6 @@
 package me.Ieonerd.simplehud.gui;
 
+import me.Ieonerd.simplehud.config.SimpleHUDConfig;
 import me.Ieonerd.simplehud.mixin.MinecraftClientAccessor;
 
 import net.minecraft.client.MinecraftClient;
@@ -11,8 +12,6 @@ import net.minecraft.util.math.Vec3d;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Objects;
-
-import static me.Ieonerd.simplehud.config.SimpleHUDConfigScreen.CONFIG;
 
 //Handles the rendering of SimpleHUD
 public class SimpleHUDDisplay {
@@ -82,7 +81,7 @@ public class SimpleHUDDisplay {
     //30-59 fps -> yellow
     //<30 fps -> red
     private int getFPSColor(int fps){
-        if(!CONFIG.indicateLowFps.getValue()) return HUD_WHITE;
+        if(!SimpleHUDConfig.getBoolConfigValue("indicateLowFps")) return HUD_WHITE;
         if(fps < 30) return FPS_RED;
         if(fps < 60) return FPS_YELLOW;
         return HUD_WHITE;
@@ -91,7 +90,7 @@ public class SimpleHUDDisplay {
     //Formats a string for coordinates
     private String getCoords(){
         Vec3d position = this.client.getCameraEntity().getPos();
-        int round = (int) CONFIG.coordsRounding.get(client.options);
+        int round = SimpleHUDConfig.getIntConfigValue("coordRounding");
 
         //Formats the first coordinate string with the desired rounding numbers
         String placeDigits = String.format("XYZ: %%.%df, %%.%df, %%.%df", round, round, round);
@@ -120,7 +119,7 @@ public class SimpleHUDDisplay {
     //Formats a string for the time display
     private String getTime(){
         long time = this.client.world.getTimeOfDay(); //time = ticks since the world started
-        Clock setting = CONFIG.clockMode.getValue();
+        Clock setting = Enum.valueOf(Clock.class, SimpleHUDConfig.getConfigValue("clockMode"));
 
         if(setting == Clock.TICK)
             return String.format(Locale.ROOT, "%d",time % 24000); //Ticked clock, like /time query daytime
@@ -143,7 +142,7 @@ public class SimpleHUDDisplay {
     //It will only turn green whenever it's either thundering, or it's nighttime,
     //and ignores other things like nearby monsters.
     private int getTimeColor(){
-        if(!CONFIG.indicateCanSleep.getValue()) return HUD_WHITE;
+        if(!SimpleHUDConfig.getBoolConfigValue("indicateCanSleep")) return HUD_WHITE;
 
         long time = this.client.world.getTimeOfDay() % 24000; //time is equal to /time query daytime
         if(this.client.world.isThundering() || (time > 12541 && time < 23460)) return SLEEP_GREEN;
@@ -154,7 +153,7 @@ public class SimpleHUDDisplay {
     //Formats an ArrayList of String[] for the renderer
     private ArrayList<String[]> getText(int fps, int fpsMin){
         //Fps is displayed like in Optifine, with a slash between average and minimum fps
-        String[] fpsRow = CONFIG.displayMinFps.getValue() ?
+        String[] fpsRow = SimpleHUDConfig.getBoolConfigValue("displayMinFps") ?
                 new String[]{String.valueOf(fps), "/", String.valueOf(fpsMin), " fps"} :
                 new String[]{String.valueOf(fps), " fps"};
 
@@ -163,7 +162,7 @@ public class SimpleHUDDisplay {
         arr.add(fpsRow);
 
         //respectReducedF3 hides coordinates and time if the server has the gamerule toggled on
-        if(CONFIG.respectReducedF3.getValue() && this.client.hasReducedDebugInfo()) return arr;
+        if(SimpleHUDConfig.getBoolConfigValue("respectReducedF3") && this.client.hasReducedDebugInfo()) return arr;
 
 
         arr.add(new String[]{getCoords(), " ", getDirection()});
