@@ -107,12 +107,23 @@ public class SimpleHUDDisplay {
         int mode = (int) v % 4;
         if(v < 0) mode += 3;
 
+        if(Enum.valueOf(Compass.class, SimpleHUDConfig.getConfigValue("compassMode")) == Compass.INITIALS_ONLY){
+            return switch(mode){
+                case 0 -> "S";
+                case 1 -> "W";
+                case 2 -> "N";
+                case 3 -> "E";
+                default -> "?"; //Shouldn't happen, used to identify unintended behavior
+            };
+        }
+
         return switch(mode){
-            case 0 -> "S";
-            case 1 -> "W";
-            case 2 -> "N";
-            case 3 -> "E";
-            default -> "?"; //Shouldn't happen, used to identify unintended behavior
+            case 0 -> "South";
+            case 1 -> "West";
+            case 2 -> "North";
+            case 3 -> "East";
+            default -> "?";
+
         };
     }
 
@@ -164,8 +175,11 @@ public class SimpleHUDDisplay {
         //respectReducedF3 hides coordinates and time if the server has the gamerule toggled on
         if(SimpleHUDConfig.getBoolConfigValue("respectReducedF3") && this.client.hasReducedDebugInfo()) return arr;
 
+        if(Enum.valueOf(Compass.class, SimpleHUDConfig.getConfigValue("compassMode")) == Compass.OFF)
+            arr.add(new String[]{getCoords()});
+        else
+            arr.add(new String[]{getCoords(), " ", getDirection()});
 
-        arr.add(new String[]{getCoords(), " ", getDirection()});
         arr.add(new String[]{new TranslatableText("simplehud.hud.time").getString(), getTime()});
         return arr;
     }
@@ -184,5 +198,11 @@ public class SimpleHUDDisplay {
         TICK,
         HR24,
         HR12
+    }
+
+    public enum Compass{
+        OFF,
+        INITIALS_ONLY,
+        FULL_WORD
     }
 }

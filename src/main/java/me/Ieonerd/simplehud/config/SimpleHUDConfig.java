@@ -1,12 +1,12 @@
 package me.Ieonerd.simplehud.config;
 
-import com.google.common.reflect.TypeToken;
 import me.Ieonerd.simplehud.SimpleHUD;
 import me.Ieonerd.simplehud.gui.SimpleHUDDisplay;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
+import com.google.common.reflect.TypeToken;
 
 import net.fabricmc.loader.api.FabricLoader;
 
@@ -28,6 +28,7 @@ import java.util.HashMap;
 // Credit to TerraformersMC, though I didn't use their code verbatim
 public class SimpleHUDConfig {
     private static CyclingOption<SimpleHUDDisplay.Clock> clockMode;
+    private static CyclingOption<SimpleHUDDisplay.Compass> compassMode;
     private static CyclingOption<Boolean> indicateCanSleep;
     private static CyclingOption<Boolean> indicateLowFps;
     private static CyclingOption<Boolean> displayMinFps;
@@ -63,6 +64,7 @@ public class SimpleHUDConfig {
 
         // Default values in case loading fails
         clockMode = createEnumOption("clockMode","simplehud.config.clock", SimpleHUDDisplay.Clock.HR24);
+        compassMode = createEnumOption("compassMode","simplehud.config.compass", SimpleHUDDisplay.Compass.INITIALS_ONLY);
         indicateCanSleep = createBoolOption("indicateCanSleep", "simplehud.config.sleep_indicator", true);
         indicateLowFps = createBoolOption("indicateLowFps","simplehud.config.low_fps", true);
         displayMinFps = createBoolOption("displayMinFps", "simplehud.config.fps_min", true);
