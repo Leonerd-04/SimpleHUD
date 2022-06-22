@@ -37,9 +37,11 @@ public class SimpleHUDConfig {
     private static DoubleOption coordsRounding;
 
     public static ArrayList<Option> OPTIONS;
-    private static HashMap<String, String> MAP;
+    private final static HashMap<String, String> STRING_MAP = new HashMap<>();
+    private final static HashMap<String, Integer> INT_MAP = new HashMap<>();
+    private final static HashMap<String, Boolean> BOOLEAN_MAP = new HashMap<>();
 
-    private final static Type MAP_TYPE = new TypeToken<HashMap<String, String>>() {}.getType();
+    private final static Type MAP_TYPE = new TypeToken<HashMap<String, Object>>() {}.getType();
     private final static Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static File file;
     private static final Logger LOGGER = LogManager.getLogger();
@@ -52,7 +54,6 @@ public class SimpleHUDConfig {
 
     //Tries to load a config file; reverts to default values if not found
     public static void load(){
-        MAP = new HashMap<>();
         OPTIONS = new ArrayList<>();
 
         clockMode = createEnumOption("clockMode","simplehud.config.clock", SimpleHUDDisplay.Clock.HR24);
@@ -70,7 +71,21 @@ public class SimpleHUDConfig {
                 save();
             }
             FileReader reader = new FileReader(file);
-            MAP = GSON.fromJson(reader, MAP_TYPE);
+            HashMap<String, Object> map = GSON.fromJson(reader, MAP_TYPE);
+
+            for(String key : map.keySet()){
+                if(map.get(key) instanceof Double){
+                    INT_MAP.put(key, ((Double) map.get(key)).intValue());
+                    continue;
+                }
+                if(map.get(key) instanceof Boolean){
+                    BOOLEAN_MAP.put(key, (Boolean) map.get(key));
+                    continue;
+                }
+
+                STRING_MAP.put(key, (String) map.get(key));
+            }
+
         } catch (FileNotFoundException | JsonSyntaxException e) {
             LOGGER.error("Config file failed to load; Reverting to default values");
             e.printStackTrace();
@@ -80,7 +95,12 @@ public class SimpleHUDConfig {
     //Tries to save the config file
     public static void save(){
         prepareConfigFile();
-        String json = GSON.toJson(MAP, MAP_TYPE);
+
+        HashMap<String, Object> map = new HashMap<>(STRING_MAP);
+        map.putAll(BOOLEAN_MAP);
+        map.putAll(INT_MAP);
+
+        String json = GSON.toJson(map, MAP_TYPE);
 
         LOGGER.info("Saving config file");
 
@@ -94,25 +114,25 @@ public class SimpleHUDConfig {
 
 
     public static boolean getBoolConfigValue(String key){
-        return Boolean.parseBoolean(MAP.get(key));
+        return BOOLEAN_MAP.get(key);
     }
 
     public static int getIntConfigValue(String key){
-        return Integer.parseInt(MAP.get(key));
+        return INT_MAP.get(key);
     }
 
     public static String getConfigValue(String key){
-        return MAP.get(key);
+        return STRING_MAP.get(key);
     }
 
 
     private static CyclingOption<Boolean> createBoolOption(String hashKey, String translationKey, boolean defaultVal){
-        MAP.put(hashKey, String.valueOf(defaultVal));
+        BOOLEAN_MAP.put(hashKey, defaultVal);
 
         CyclingOption<Boolean> option = CyclingOption.create(
                 translationKey,
-                ignored -> Boolean.parseBoolean(MAP.get(hashKey)),
-                (ignored, ignored2, newVal) -> MAP.put(hashKey, String.valueOf(newVal))
+                ignored -> BOOLEAN_MAP.get(hashKey),
+                (ignored, ignored2, newVal) -> BOOLEAN_MAP.put(hashKey, newVal)
         );
 
         OPTIONS.add(option);
@@ -120,13 +140,13 @@ public class SimpleHUDConfig {
     }
 
     private static DoubleOption createIntOption(String hashKey, String translationKey, int defaultVal, int min, int max){
-        MAP.put(hashKey, String.valueOf(defaultVal));
+        INT_MAP.put(hashKey, defaultVal);
 
         DoubleOption option = new DoubleOption(translationKey, min, max, 1.0F,
-                ignored -> (double) Integer.parseInt(MAP.get(hashKey)),
-                (ignored, newVal) -> MAP.put(hashKey, String.valueOf(newVal.intValue())),
+                ignored -> (double) INT_MAP.get(hashKey),
+                (ignored, newVal) -> INT_MAP.put(hashKey, newVal.intValue()),
                 (ignored, ignored2) -> {
-                    TranslatableText valueKey = new TranslatableText(String.format(translationKey + ".%d", Integer.valueOf(MAP.get(hashKey))));
+                    TranslatableText valueKey = new TranslatableText(String.format(translationKey + ".%d", INT_MAP.get(hashKey)));
                     return new TranslatableText(translationKey, valueKey);
                 }
         );
@@ -136,14 +156,14 @@ public class SimpleHUDConfig {
     }
 
     private static <E extends Enum<E>> CyclingOption<E> createEnumOption(String hashKey, String translationKey, E defaultVal){
-        MAP.put(hashKey, defaultVal.name());
+        STRING_MAP.put(hashKey, defaultVal.name());
 
         CyclingOption<E> option = CyclingOption.create(
                 translationKey,
                 defaultVal.getDeclaringClass().getEnumConstants(),
                 value -> new TranslatableText(translationKey + "." + value.name().toLowerCase()),
-                ignored -> Enum.valueOf(defaultVal.getDeclaringClass(), MAP.get(hashKey)),
-                (ignored, ignored2, value) -> MAP.put(hashKey, value.name())
+                ignored -> Enum.valueOf(defaultVal.getDeclaringClass(), STRING_MAP.get(hashKey)),
+                (ignored, ignored2, value) -> STRING_MAP.put(hashKey, value.name())
         );
 
         OPTIONS.add(option);
