@@ -23,9 +23,9 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-//Handles config, including storage, for this mod
-//I figured out a lot of this code by looking at the implementation in Mod Menu
-//Credit to TerraformersMC, though I didn't use their code verbatim
+// Handles config, including storage, for this mod
+// I figured some of this code by looking at the implementation in Mod Menu
+// Credit to TerraformersMC, though I didn't use their code verbatim
 public class SimpleHUDConfig {
     private static CyclingOption<SimpleHUDDisplay.Clock> clockMode;
     private static CyclingOption<Boolean> indicateCanSleep;
@@ -33,10 +33,13 @@ public class SimpleHUDConfig {
     private static CyclingOption<Boolean> displayMinFps;
     private static CyclingOption<Boolean> respectReducedF3;
 
-    //Using DoubleOption lets me use a slider
+    // Using DoubleOption lets me use a slider
     private static DoubleOption coordsRounding;
 
+    // An array with all the configs, specifically for rendering them in the settings screen
     public static ArrayList<Option> OPTIONS;
+
+    // Hashmaps storing the config values
     private final static HashMap<String, String> STRING_MAP = new HashMap<>();
     private final static HashMap<String, Integer> INT_MAP = new HashMap<>();
     private final static HashMap<String, Boolean> BOOLEAN_MAP = new HashMap<>();
@@ -46,16 +49,19 @@ public class SimpleHUDConfig {
     private static File file;
     private static final Logger LOGGER = LogManager.getLogger();
 
-    //Checks if the config file has the correct path
+    // Checks if the config file has the correct path
     private static void prepareConfigFile(){
         if(file != null) return;
         file = new File(FabricLoader.getInstance().getConfigDir().toFile(), SimpleHUD.MOD_ID + ".json");
     }
 
-    //Tries to load a config file; reverts to default values if not found
+    // The config stores different config types in three hashmaps and combines them into one for storage
+
+    // Tries to load a config file; reverts to default values if not found
     public static void load(){
         OPTIONS = new ArrayList<>();
 
+        // Default values in case loading fails
         clockMode = createEnumOption("clockMode","simplehud.config.clock", SimpleHUDDisplay.Clock.HR24);
         indicateCanSleep = createBoolOption("indicateCanSleep", "simplehud.config.sleep_indicator", true);
         indicateLowFps = createBoolOption("indicateLowFps","simplehud.config.low_fps", true);
@@ -92,7 +98,7 @@ public class SimpleHUDConfig {
         }
     }
 
-    //Tries to save the config file
+    // Tries to save the config file
     public static void save(){
         prepareConfigFile();
 
