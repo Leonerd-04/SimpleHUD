@@ -19,7 +19,6 @@ import static me.Ieonerd.simplehud.config.SimpleHUDConfig.OPTIONS;
 @Environment(EnvType.CLIENT)
 public class SimpleHUDConfigScreen extends GameOptionsScreen {
     private ButtonListWidget buttonList;
-    public static SimpleHUDConfig CONFIG;
 
     public SimpleHUDConfigScreen(Screen parent) {
         super(parent, MinecraftClient.getInstance().options, Text.of("SimpleHUD Options"));
@@ -31,12 +30,11 @@ public class SimpleHUDConfigScreen extends GameOptionsScreen {
         this.addDrawableChild(buttonList);
 
         this.addDrawableChild(new ButtonWidget(this.width / 2 - 100, this.height - 27, 200, 20, ScreenTexts.DONE, (button) -> {
-            CONFIG.save();
             this.client.setScreen(this.parent);
         }));
     }
 
     public void removed(){
-        CONFIG.save();
+        SimpleHUDConfig.save();
     }
 }
