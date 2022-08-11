@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MinecraftClientMixin {
 
 	//Triggers whenever the current fps is set, so the average and minimum fps update simultaneously
-	@Inject(method = "render", at = @At(value = "INVOKE", target = "Ljava/lang/String;format(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;"))
+	@Inject(method = "render", at = @At(value = "INVOKE", target = "Ljava/lang/String;format(Ljava/util/Locale;Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;"))
 	public void updateDisplay(boolean tick, CallbackInfo ci){
 		SimpleHUDDisplay.setMinFps(calculateMinFps());
 	}

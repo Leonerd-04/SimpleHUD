@@ -8,6 +8,7 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.hud.InGameHud;
+import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 
 import org.spongepowered.asm.mixin.Final;
@@ -26,7 +27,7 @@ public class MixinInGameHud extends DrawableHelper {
 
     //Adds a CondensedInfoHUD object to the InGameHud object used by the client
     @Inject(method = "<init>", at = @At("TAIL"))
-    public void addSimpleHudToHUD(MinecraftClient client, CallbackInfo ci){
+    public void addSimpleHudToHUD(MinecraftClient client, ItemRenderer itemRenderer, CallbackInfo ci){
         simpleHUD = new SimpleHUDDisplay(client);
     }
 

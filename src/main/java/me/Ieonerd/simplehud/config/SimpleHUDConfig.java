@@ -1,5 +1,6 @@
 package me.Ieonerd.simplehud.config;
 
+import com.mojang.serialization.Codec;
 import me.Ieonerd.simplehud.SimpleHUD;
 import me.Ieonerd.simplehud.gui.SimpleHUDDisplay;
 
@@ -10,10 +11,8 @@ import com.google.common.reflect.TypeToken;
 
 import net.fabricmc.loader.api.FabricLoader;
 
-import net.minecraft.client.option.CyclingOption;
-import net.minecraft.client.option.DoubleOption;
-import net.minecraft.client.option.Option;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
+import net.minecraft.client.option.SimpleOption;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -21,24 +20,26 @@ import org.apache.logging.log4j.Logger;
 import java.io.*;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 // Handles config, including storage, for this mod
 // I figured some of this code by looking at the implementation in Mod Menu
 // Credit to TerraformersMC, though I didn't use their code verbatim
 public class SimpleHUDConfig {
-    private static CyclingOption<SimpleHUDDisplay.Clock> clockMode;
-    private static CyclingOption<SimpleHUDDisplay.Compass> compassMode;
-    private static CyclingOption<Boolean> indicateCanSleep;
-    private static CyclingOption<Boolean> indicateLowFps;
-    private static CyclingOption<Boolean> displayMinFps;
-    private static CyclingOption<Boolean> respectReducedF3;
+    public static SimpleOption<SimpleHUDDisplay.Clock> clockMode;
+    public static SimpleOption<SimpleHUDDisplay.Compass> compassMode;
+    public static SimpleOption<Boolean> indicateCanSleep;
+    public static SimpleOption<Boolean> indicateLowFps;
+    public static SimpleOption<Boolean> displayMinFps;
+    public static SimpleOption<Boolean> respectReducedF3;
 
     // Using DoubleOption lets me use a slider
-    private static DoubleOption coordsRounding;
+    public static SimpleOption<Integer> coordsRounding;
 
     // An array with all the configs, specifically for rendering them in the settings screen
-    public static ArrayList<Option> OPTIONS;
+    public static ArrayList<SimpleOption> OPTIONS;
 
     // Hashmaps storing the config values
     private final static HashMap<String, String> STRING_MAP = new HashMap<>();
@@ -134,44 +135,47 @@ public class SimpleHUDConfig {
     }
 
 
-    private static CyclingOption<Boolean> createBoolOption(String hashKey, String translationKey, boolean defaultVal){
+    private static SimpleOption<Boolean> createBoolOption(String hashKey, String translationKey, boolean defaultVal){
         BOOLEAN_MAP.put(hashKey, defaultVal);
 
-        CyclingOption<Boolean> option = CyclingOption.create(
-                translationKey,
-                ignored -> BOOLEAN_MAP.get(hashKey),
-                (ignored, ignored2, newVal) -> BOOLEAN_MAP.put(hashKey, newVal)
-        );
+        SimpleOption<Boolean> option = SimpleOption.ofBoolean(translationKey, defaultVal);
 
         OPTIONS.add(option);
         return option;
     }
 
-    private static DoubleOption createIntOption(String hashKey, String translationKey, int defaultVal, int min, int max){
+    private static SimpleOption<Integer> createIntOption(String hashKey, String translationKey, int defaultVal, int min, int max){
         INT_MAP.put(hashKey, defaultVal);
 
-        DoubleOption option = new DoubleOption(translationKey, min, max, 1.0F,
-                ignored -> (double) INT_MAP.get(hashKey),
-                (ignored, newVal) -> INT_MAP.put(hashKey, newVal.intValue()),
-                (ignored, ignored2) -> {
-                    TranslatableText valueKey = new TranslatableText(String.format(translationKey + ".%d", INT_MAP.get(hashKey)));
-                    return new TranslatableText(translationKey, valueKey);
-                }
+        SimpleOption<Integer> option = new SimpleOption<>(
+                translationKey,
+                SimpleOption.emptyTooltip(),
+                (optionText, value) -> {
+                    Text valueKey = Text.translatable(String.format(translationKey + ".%d", value));
+                    return Text.translatable(translationKey, valueKey);
+                },
+                new SimpleOption.ValidatingIntSliderCallbacks(min, max),
+                defaultVal,
+                value -> {}
         );
 
         OPTIONS.add(option);
         return option;
     }
 
-    private static <E extends Enum<E>> CyclingOption<E> createEnumOption(String hashKey, String translationKey, E defaultVal){
+    private static <E extends Enum<E>> SimpleOption<E> createEnumOption(String hashKey, String translationKey, E defaultVal){
         STRING_MAP.put(hashKey, defaultVal.name());
 
-        CyclingOption<E> option = CyclingOption.create(
+        List<E> values = Arrays.asList(defaultVal.getDeclaringClass().getEnumConstants());
+
+        SimpleOption<E> option = new SimpleOption<>(
                 translationKey,
-                defaultVal.getDeclaringClass().getEnumConstants(),
-                value -> new TranslatableText(translationKey + "." + value.name().toLowerCase()),
-                ignored -> Enum.valueOf(defaultVal.getDeclaringClass(), STRING_MAP.get(hashKey)),
-                (ignored, ignored2, value) -> STRING_MAP.put(hashKey, value.name())
+                SimpleOption.emptyTooltip(),
+                (optionText, value) -> Text.translatable(translationKey + "." + value.name().toLowerCase()),
+                new SimpleOption.PotentialValuesBasedCallbacks<E>(values,
+                        Codec.INT.xmap(values::get, values::indexOf)),
+                defaultVal,
+                value -> {}
         );
 
         OPTIONS.add(option);

@@ -6,7 +6,7 @@ import me.Ieonerd.simplehud.mixin.MinecraftClientAccessor;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.Vec3d;
 
 import java.util.ArrayList;
@@ -180,7 +180,7 @@ public class SimpleHUDDisplay {
         else
             arr.add(new String[]{getCoords(), " ", getDirection()});
 
-        arr.add(new String[]{new TranslatableText("simplehud.hud.time").getString(), getTime()});
+        arr.add(new String[]{Text.translatable("simplehud.hud.time").getString(), getTime()});
         return arr;
     }
 
