@@ -39,12 +39,12 @@ public class SimpleHUDConfig {
     public static SimpleOption<Integer> coordsRounding;
 
     // An array with all the configs, specifically for rendering them in the settings screen
-    public static ArrayList<SimpleOption> OPTIONS;
+    public static ArrayList<SimpleOption<?>> OPTIONS;
 
     // Hashmaps storing the config values
-    private final static HashMap<String, String> STRING_MAP = new HashMap<>();
-    private final static HashMap<String, Integer> INT_MAP = new HashMap<>();
-    private final static HashMap<String, Boolean> BOOLEAN_MAP = new HashMap<>();
+    private final static HashMap<String, SimpleOption<Enum<?>>> ENUM_MAP = new HashMap<>();
+    private final static HashMap<String, SimpleOption<Integer>> INT_MAP = new HashMap<>();
+    private final static HashMap<String, SimpleOption<Boolean>> BOOLEAN_MAP = new HashMap<>();
 
     private final static Type MAP_TYPE = new TypeToken<HashMap<String, Object>>() {}.getType();
     private final static Gson GSON = new GsonBuilder().setPrettyPrinting().create();
@@ -84,15 +84,16 @@ public class SimpleHUDConfig {
 
             for(String key : map.keySet()){
                 if(map.get(key) instanceof Double){
-                    INT_MAP.put(key, ((Double) map.get(key)).intValue());
+                    INT_MAP.get(key).setValue(((Double) map.get(key)).intValue());
                     continue;
                 }
                 if(map.get(key) instanceof Boolean){
-                    BOOLEAN_MAP.put(key, (Boolean) map.get(key));
+                    BOOLEAN_MAP.get(key).setValue((Boolean) map.get(key));
                     continue;
                 }
-
-                STRING_MAP.put(key, (String) map.get(key));
+                if(map.get(key) instanceof Enum<?>){
+                    ENUM_MAP.get(key).setValue((Enum<?>) map.get(key));
+                }
             }
 
         } catch (FileNotFoundException | JsonSyntaxException e) {
@@ -105,9 +106,9 @@ public class SimpleHUDConfig {
     public static void save(){
         prepareConfigFile();
 
-        HashMap<String, Object> map = new HashMap<>(STRING_MAP);
-        map.putAll(BOOLEAN_MAP);
-        map.putAll(INT_MAP);
+        HashMap<String, Object> map = new HashMap<>(getValues(ENUM_MAP));
+        map.putAll(getValues(BOOLEAN_MAP));
+        map.putAll(getValues(INT_MAP));
 
         String json = GSON.toJson(map, MAP_TYPE);
 
@@ -121,32 +122,39 @@ public class SimpleHUDConfig {
         }
     }
 
+    //Maps a hashmap of SimpleOptions to a hashmap of values
+    private static <T> HashMap<String, T> getValues(HashMap<String, SimpleOption<T>> optionMap){
+        HashMap<String, T> valMap = new HashMap<>();
+        for(String key : optionMap.keySet()){
+            valMap.put(key, optionMap.get(key).getValue());
+        }
+
+        return valMap;
+    }
+
 
     public static boolean getBoolConfigValue(String key){
-        return BOOLEAN_MAP.get(key);
+        return BOOLEAN_MAP.get(key).getValue();
     }
 
     public static int getIntConfigValue(String key){
-        return INT_MAP.get(key);
+        return INT_MAP.get(key).getValue();
     }
 
     public static String getConfigValue(String key){
-        return STRING_MAP.get(key);
+        return ENUM_MAP.get(key).getValue().toString();
     }
 
 
     private static SimpleOption<Boolean> createBoolOption(String hashKey, String translationKey, boolean defaultVal){
-        BOOLEAN_MAP.put(hashKey, defaultVal);
-
         SimpleOption<Boolean> option = SimpleOption.ofBoolean(translationKey, defaultVal);
 
+        BOOLEAN_MAP.put(hashKey, option);
         OPTIONS.add(option);
         return option;
     }
 
     private static SimpleOption<Integer> createIntOption(String hashKey, String translationKey, int defaultVal, int min, int max){
-        INT_MAP.put(hashKey, defaultVal);
-
         SimpleOption<Integer> option = new SimpleOption<>(
                 translationKey,
                 SimpleOption.emptyTooltip(),
@@ -159,25 +167,25 @@ public class SimpleHUDConfig {
                 value -> {}
         );
 
+        INT_MAP.put(hashKey, option);
         OPTIONS.add(option);
         return option;
     }
 
     private static <E extends Enum<E>> SimpleOption<E> createEnumOption(String hashKey, String translationKey, E defaultVal){
-        STRING_MAP.put(hashKey, defaultVal.name());
-
         List<E> values = Arrays.asList(defaultVal.getDeclaringClass().getEnumConstants());
 
         SimpleOption<E> option = new SimpleOption<>(
                 translationKey,
                 SimpleOption.emptyTooltip(),
                 (optionText, value) -> Text.translatable(translationKey + "." + value.name().toLowerCase()),
-                new SimpleOption.PotentialValuesBasedCallbacks<E>(values,
+                new SimpleOption.PotentialValuesBasedCallbacks<>(values,
                         Codec.INT.xmap(values::get, values::indexOf)),
                 defaultVal,
                 value -> {}
         );
 
+        ENUM_MAP.put(hashKey, (SimpleOption<Enum<?>>) option);
         OPTIONS.add(option);
         return option;
     }
