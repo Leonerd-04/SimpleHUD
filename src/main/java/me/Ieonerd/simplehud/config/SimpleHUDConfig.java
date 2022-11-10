@@ -91,9 +91,11 @@ public class SimpleHUDConfig {
                     BOOLEAN_MAP.get(key).setValue((Boolean) map.get(key));
                     continue;
                 }
-                if(map.get(key) instanceof Enum<?>){
-                    ENUM_MAP.get(key).setValue((Enum<?>) map.get(key));
+                if(map.get(key) instanceof String){
+                    ENUM_MAP.get(key).setValue(getEnum(key, (String) map.get(key)));
+                    continue;
                 }
+                LOGGER.info("Setting \"{}\" could not be read", key);
             }
 
         } catch (FileNotFoundException | JsonSyntaxException e) {
@@ -120,6 +122,16 @@ public class SimpleHUDConfig {
             LOGGER.error("Failed to save config file");
             e.printStackTrace();
         }
+    }
+
+    // Finds the class and enum value of a hashmap key's string value
+    // Used for converting String entries to their proper Enum types to properly read the config file
+    private static Enum<?> getEnum(String enumKey, String value){
+        return switch(enumKey){
+            case "clockMode" -> Enum.valueOf(SimpleHUDDisplay.Clock.class, value);
+            case "compassMode" -> Enum.valueOf(SimpleHUDDisplay.Compass.class, value);
+            default -> null;
+        };
     }
 
     //Maps a hashmap of SimpleOptions to a hashmap of values
