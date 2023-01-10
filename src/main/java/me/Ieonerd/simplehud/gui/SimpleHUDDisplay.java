@@ -9,6 +9,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.Vec3d;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Objects;
@@ -17,6 +18,7 @@ import java.util.Objects;
 public class SimpleHUDDisplay {
     MinecraftClient client;
     private static int minFps;
+    private static int serverPing = -1; //Negative values indicate no connection to a dedicated server
     private static final int HUD_WHITE = 0xE0E0E0; //Color of the F3 HUD text
     private static final int HUD_BACKGROUND = 0x90505050; //Color of the F3 HUD background
     private static final int SLEEP_GREEN = 0x56E65A;
@@ -71,9 +73,14 @@ public class SimpleHUDDisplay {
         }
     }
 
-    //Allows the minimum fps method to be updated by the MinecraftClientMixin
+    //Allows the minimum fps to be updated by the MinecraftClientMixin
     public static void setMinFps(int x){
         minFps = x;
+    }
+
+    //Allows the server ping time to be updated by the MinecraftClientMixin
+    public static void setPing(int x){
+        serverPing = x;
     }
 
     //Changes the fps display's color
@@ -84,6 +91,17 @@ public class SimpleHUDDisplay {
         if(!SimpleHUDConfig.getBoolConfigValue("indicateLowFps")) return HUD_WHITE;
         if(fps < 30) return FPS_RED;
         if(fps < 60) return FPS_YELLOW;
+        return HUD_WHITE;
+    }
+
+    //Changes the fps display's color
+    //>60 fps -> white
+    //30-59 fps -> yellow
+    //<30 fps -> red
+    private int getPingColor(int ping){
+        // if(!SimpleHUDConfig.getBoolConfigValue("indicateLowFps")) return HUD_WHITE;
+        if(ping > 400) return FPS_RED;
+        if(ping > 100) return FPS_YELLOW;
         return HUD_WHITE;
     }
 
@@ -163,25 +181,28 @@ public class SimpleHUDDisplay {
 
     //Formats an ArrayList of String[] for the renderer
     private ArrayList<String[]> getText(int fps, int fpsMin){
+        ArrayList<String[]> text = new ArrayList<>();
+
         //Fps is displayed like in Optifine, with a slash between average and minimum fps
         String[] fpsRow = SimpleHUDConfig.getBoolConfigValue("displayMinFps") ?
-                new String[]{String.valueOf(fps), "/", String.valueOf(fpsMin), " fps"} :
+                new String[]{String.valueOf(fps), "/", String.valueOf(fpsMin), " fps", } :
                 new String[]{String.valueOf(fps), " fps"};
 
-        ArrayList<String[]> arr = new ArrayList<>();
+        text.add(fpsRow);
 
-        arr.add(fpsRow);
+        if(serverPing > -1)
+            text.add(new String[]{String.valueOf(serverPing), " ms ping"});
 
         //respectReducedF3 hides coordinates and time if the server has the gamerule toggled on
-        if(SimpleHUDConfig.getBoolConfigValue("respectReducedF3") && this.client.hasReducedDebugInfo()) return arr;
+        if(SimpleHUDConfig.getBoolConfigValue("respectReducedF3") && this.client.hasReducedDebugInfo()) return text;
 
         if(Enum.valueOf(Compass.class, SimpleHUDConfig.getConfigValue("compassMode")) == Compass.OFF)
-            arr.add(new String[]{getCoords()});
+            text.add(new String[]{getCoords()});
         else
-            arr.add(new String[]{getCoords(), " ", getDirection()});
+            text.add(new String[]{getCoords(), " ", getDirection()});
 
-        arr.add(new String[]{Text.translatable("simplehud.hud.time").getString(), getTime()});
-        return arr;
+        text.add(new String[]{Text.translatable("simplehud.hud.time").getString(), getTime()});
+        return text;
     }
 
     //Formats an ArrayList of int[] for the renderer's colors
@@ -189,6 +210,9 @@ public class SimpleHUDDisplay {
         ArrayList<int[]> arr = new ArrayList<>();
 
         arr.add(new int[]{getFPSColor(fps), HUD_WHITE, getFPSColor(fpsMin), HUD_WHITE});
+
+        if(serverPing > -1) arr.add(new int[]{getPingColor(fps * 5), HUD_WHITE});
+
         arr.add(new int[]{HUD_WHITE});
         arr.add(new int[]{HUD_WHITE, getTimeColor()});
         return arr;
