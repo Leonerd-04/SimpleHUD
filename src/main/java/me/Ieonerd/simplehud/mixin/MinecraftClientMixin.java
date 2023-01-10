@@ -3,20 +3,40 @@ package me.Ieonerd.simplehud.mixin;
 import me.Ieonerd.simplehud.gui.SimpleHUDDisplay;
 
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.ClientPlayNetworkHandler;
+import net.minecraft.server.integrated.IntegratedServer;
 import net.minecraft.util.MetricsData;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(MinecraftClient.class)
-public class MinecraftClientMixin {
+public abstract class MinecraftClientMixin {
 
-	//Triggers whenever the current fps is set, so the average and minimum fps update simultaneously
+	private final static Logger LOGGER = LogManager.getLogger();
+
+	//Triggers whenever the current fps is set, so the average & minimum fps as well as the ping update simultaneously
 	@Inject(method = "render", at = @At(value = "INVOKE", target = "Ljava/lang/String;format(Ljava/util/Locale;Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;"))
 	public void updateDisplay(boolean tick, CallbackInfo ci){
 		SimpleHUDDisplay.setMinFps(calculateMinFps());
+
+		ClientPlayNetworkHandler handler = ((MinecraftClient)(Object) this).getNetworkHandler();
+		if(handler == null || ((MinecraftClient)(Object) this).getServer() != null){
+			SimpleHUDDisplay.setPing(-1);
+			return;
+		}
+
+		try {
+			SimpleHUDDisplay.setPing(handler.getPlayerListEntry(handler.getProfile().getId()).getLatency());
+		} catch(Throwable throwable){
+			LOGGER.error("setPing failed ", throwable);
+		}
 	}
 
 	//Gets the minimum fps over the last second by finding the largest frame time

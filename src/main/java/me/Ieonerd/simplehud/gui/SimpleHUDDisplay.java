@@ -211,7 +211,7 @@ public class SimpleHUDDisplay {
 
         arr.add(new int[]{getFPSColor(fps), HUD_WHITE, getFPSColor(fpsMin), HUD_WHITE});
 
-        if(serverPing > -1) arr.add(new int[]{getPingColor(fps * 5), HUD_WHITE});
+        if(serverPing > -1) arr.add(new int[]{getPingColor(serverPing), HUD_WHITE});
 
         arr.add(new int[]{HUD_WHITE});
         arr.add(new int[]{HUD_WHITE, getTimeColor()});
