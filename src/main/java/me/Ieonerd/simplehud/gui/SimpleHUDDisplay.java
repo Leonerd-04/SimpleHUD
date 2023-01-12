@@ -9,7 +9,6 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.Vec3d;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Objects;
@@ -94,10 +93,10 @@ public class SimpleHUDDisplay {
         return HUD_WHITE;
     }
 
-    //Changes the fps display's color
-    //>60 fps -> white
-    //30-59 fps -> yellow
-    //<30 fps -> red
+    //Changes the ping display's color
+    //<100 ms -> white
+    //100-400 ms -> yellow
+    //>400 ms -> red
     private int getPingColor(int ping){
         // if(!SimpleHUDConfig.getBoolConfigValue("indicateLowFps")) return HUD_WHITE;
         if(ping > 400) return FPS_RED;

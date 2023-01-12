@@ -4,14 +4,11 @@ import me.Ieonerd.simplehud.gui.SimpleHUDDisplay;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.server.integrated.IntegratedServer;
 import net.minecraft.util.MetricsData;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -27,6 +24,8 @@ public abstract class MinecraftClientMixin {
 		SimpleHUDDisplay.setMinFps(calculateMinFps());
 
 		ClientPlayNetworkHandler handler = ((MinecraftClient)(Object) this).getNetworkHandler();
+
+		//Second condition checks whether the server is integrated
 		if(handler == null || ((MinecraftClient)(Object) this).getServer() != null){
 			SimpleHUDDisplay.setPing(-1);
 			return;
