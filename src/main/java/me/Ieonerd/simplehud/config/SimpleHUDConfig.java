@@ -33,9 +33,8 @@ public class SimpleHUDConfig {
     public static SimpleOption<Boolean> indicateCanSleep;
     public static SimpleOption<Boolean> indicateLowFps;
     public static SimpleOption<Boolean> displayMinFps;
+    public static SimpleOption<Boolean> indicateHighPing;
     public static SimpleOption<Boolean> respectReducedF3;
-
-    // Using DoubleOption lets me use a slider
     public static SimpleOption<Integer> coordsRounding;
 
     // An array with all the configs, specifically for rendering them in the settings screen
@@ -68,6 +67,7 @@ public class SimpleHUDConfig {
         compassMode = createEnumOption("compassMode","simplehud.config.compass", SimpleHUDDisplay.Compass.INITIALS_ONLY);
         indicateCanSleep = createBoolOption("indicateCanSleep", "simplehud.config.sleep_indicator", true);
         indicateLowFps = createBoolOption("indicateLowFps","simplehud.config.low_fps", true);
+        indicateHighPing = createBoolOption("indicateHighPing","simplehud.config.high_ping", true);
         displayMinFps = createBoolOption("displayMinFps", "simplehud.config.fps_min", true);
         respectReducedF3 = createBoolOption("respectReducedF3", "simplehud.config.respect_reduced_f3", false);
         coordsRounding = createIntOption("coordRounding", "simplehud.config.coords", 3, 0, 6);

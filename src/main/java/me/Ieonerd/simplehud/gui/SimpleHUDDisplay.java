@@ -98,7 +98,7 @@ public class SimpleHUDDisplay {
     //100-400 ms -> yellow
     //>400 ms -> red
     private int getPingColor(int ping){
-        // if(!SimpleHUDConfig.getBoolConfigValue("indicateLowFps")) return HUD_WHITE;
+        if(!SimpleHUDConfig.getBoolConfigValue("indicateHighPing")) return HUD_WHITE;
         if(ping > 400) return FPS_RED;
         if(ping > 100) return FPS_YELLOW;
         return HUD_WHITE;
