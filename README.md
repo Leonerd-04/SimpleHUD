@@ -7,11 +7,13 @@ It is recommended to use this mod with TerraformersMC's ModMenu to gain access t
 ## The HUD
 SimpleHUD, as of now, displays the following:
 - Average framerate and minimum framerate
+- Server Ping (1.19.3)
 - Coordinates
 - Time
 
 Besides just displaying this information, the color of the HUD itself acts as an indicator:
 - The fps color changes to indicate low framerates
+- The ping color changes similarly to indicate high ping
 - The color of the clock changes to indicate when the player can sleep
 
 ## Compatibility
