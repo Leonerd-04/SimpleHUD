@@ -21,8 +21,8 @@ public class SimpleHUDDisplay {
     private static final int HUD_WHITE = 0xE0E0E0; //Color of the F3 HUD text
     private static final int HUD_BACKGROUND = 0x90505050; //Color of the F3 HUD background
     private static final int SLEEP_GREEN = 0x56E65A;
-    private static final int FPS_YELLOW = 0xFFFF45;
-    private static final int FPS_RED = 0xF48282;
+    private static final int YELLOW = 0xFFFF45;
+    private static final int RED = 0xF48282;
 
     public SimpleHUDDisplay(MinecraftClient client){
         this.client = client;
@@ -33,8 +33,10 @@ public class SimpleHUDDisplay {
     //To allow for individual sections of a given row to be different colors.
     public void render(MatrixStack matrices){
         int fps = MinecraftClientAccessor.getCurrentFPS();
+
         ArrayList<String[]> text = this.getText(fps, minFps);
         ArrayList<int[]> colors = getColors(fps, minFps);
+
         String[] row;
         int[] rowColors;
 
@@ -88,8 +90,8 @@ public class SimpleHUDDisplay {
     //<30 fps -> red
     private int getFPSColor(int fps){
         if(!SimpleHUDConfig.getBoolConfigValue("indicateLowFps")) return HUD_WHITE;
-        if(fps < 30) return FPS_RED;
-        if(fps < 60) return FPS_YELLOW;
+        if(fps < 30) return RED;
+        if(fps < 60) return YELLOW;
         return HUD_WHITE;
     }
 
@@ -99,8 +101,8 @@ public class SimpleHUDDisplay {
     //>400 ms -> red
     private int getPingColor(int ping){
         if(!SimpleHUDConfig.getBoolConfigValue("indicateHighPing")) return HUD_WHITE;
-        if(ping > 400) return FPS_RED;
-        if(ping > 100) return FPS_YELLOW;
+        if(ping > 400) return RED;
+        if(ping > 100) return YELLOW;
         return HUD_WHITE;
     }
 
@@ -119,13 +121,13 @@ public class SimpleHUDDisplay {
     //Finds the direction the player is facing (North, East, South, West)
     private String getDirection(){
         float yaw = this.client.getCameraEntity().getYaw();
-        float v = ((yaw + 45)/90);
+        float yaw_rescaled = ((yaw + 45)/90); //Adding 45 degrees to the yaw ensures quadrant boundaries are on diagonals
 
-        int mode = (int) v % 4;
-        if(v < 0) mode += 3;
+        int quadrant = (int) yaw_rescaled % 4;
+        if(yaw_rescaled < 0) quadrant += 3;
 
         if(Enum.valueOf(Compass.class, SimpleHUDConfig.getConfigValue("compassMode")) == Compass.INITIALS_ONLY){
-            return switch(mode){
+            return switch(quadrant){
                 case 0 -> "S";
                 case 1 -> "W";
                 case 2 -> "N";
@@ -134,7 +136,7 @@ public class SimpleHUDDisplay {
             };
         }
 
-        return switch(mode){
+        return switch(quadrant){
             case 0 -> "South";
             case 1 -> "West";
             case 2 -> "North";
@@ -162,7 +164,6 @@ public class SimpleHUDDisplay {
         hr = hr % 12;
         if(hr == 0) hr = 12;
 
-        //System.out.println(new TranslatableText("simplehud.hud.time.hr12",  hr, min, ampm).getString());
         return String.format(Locale.ROOT, "%2d:%02d %s",  hr, min, ampm); //12 hr AM PM clock
     }
 

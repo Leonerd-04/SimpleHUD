@@ -56,8 +56,6 @@ public class SimpleHUDConfig {
         file = new File(FabricLoader.getInstance().getConfigDir().toFile(), SimpleHUD.MOD_ID + ".json");
     }
 
-    // The config stores different config types in three hashmaps and combines them into one for storage
-
     // Tries to load a config file; reverts to default values if not found
     public static void load(){
         OPTIONS = new ArrayList<>();
