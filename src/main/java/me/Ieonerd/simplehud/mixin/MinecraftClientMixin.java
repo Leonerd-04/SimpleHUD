@@ -23,19 +23,22 @@ public abstract class MinecraftClientMixin {
 	public void updateDisplay(boolean tick, CallbackInfo ci){
 		SimpleHUDDisplay.setMinFps(calculateMinFps());
 
+		try {
+			SimpleHUDDisplay.setPing(getServerPing());
+		} catch(Throwable throwable){
+			LOGGER.error("setPing failed ", throwable);
+		}
+	}
+
+	private int getServerPing(){
 		ClientPlayNetworkHandler handler = ((MinecraftClient)(Object) this).getNetworkHandler();
 
 		//Second condition checks whether the server is integrated
 		if(handler == null || ((MinecraftClient)(Object) this).getServer() != null){
-			SimpleHUDDisplay.setPing(-1);
-			return;
+			return -1;
 		}
 
-		try {
-			SimpleHUDDisplay.setPing(handler.getPlayerListEntry(handler.getProfile().getId()).getLatency());
-		} catch(Throwable throwable){
-			LOGGER.error("setPing failed ", throwable);
-		}
+		return handler.getPlayerListEntry(handler.getProfile().getId()).getLatency();
 	}
 
 	//Gets the minimum fps over the last second by finding the largest frame time
