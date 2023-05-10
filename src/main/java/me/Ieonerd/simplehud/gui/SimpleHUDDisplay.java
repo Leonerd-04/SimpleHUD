@@ -12,12 +12,13 @@ import net.minecraft.util.math.Vec3d;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Optional;
 
 //Handles the rendering of SimpleHUD
 public class SimpleHUDDisplay {
     MinecraftClient client;
     private static int minFps;
-    private static int serverPing = -1; //Negative values indicate no connection to a dedicated server
+    private static Optional<Integer> serverPing = Optional.empty();
     private static final int HUD_WHITE = 0xE0E0E0; //Color of the F3 HUD text
     private static final int HUD_BACKGROUND = 0x90505050; //Color of the F3 HUD background
     private static final int SLEEP_GREEN = 0x56E65A;
@@ -80,7 +81,7 @@ public class SimpleHUDDisplay {
     }
 
     //Allows the server ping time to be updated by the MinecraftClientMixin
-    public static void setPing(int x){
+    public static void setPing(Optional<Integer> x){
         serverPing = x;
     }
 
@@ -190,8 +191,9 @@ public class SimpleHUDDisplay {
 
         text.add(fpsRow);
 
-        if(serverPing > -1)
-            text.add(new String[]{String.valueOf(serverPing), " ms ping"});
+        serverPing.ifPresent(
+                integer -> text.add(new String[]{String.valueOf(integer), " ms ping"})
+        );
 
         //respectReducedF3 hides coordinates and time if the server has the gamerule toggled on
         if(SimpleHUDConfig.getBoolConfigValue("respectReducedF3") && this.client.hasReducedDebugInfo()) return text;
@@ -211,7 +213,9 @@ public class SimpleHUDDisplay {
 
         arr.add(new int[]{getFPSColor(fps), HUD_WHITE, getFPSColor(fpsMin), HUD_WHITE});
 
-        if(serverPing > -1) arr.add(new int[]{getPingColor(serverPing), HUD_WHITE});
+        serverPing.ifPresent(
+                integer -> arr.add(new int[]{getPingColor(integer), HUD_WHITE})
+        );
 
         arr.add(new int[]{HUD_WHITE});
         arr.add(new int[]{HUD_WHITE, getTimeColor()});

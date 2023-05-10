@@ -13,6 +13,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.Optional;
+
 @Mixin(MinecraftClient.class)
 public abstract class MinecraftClientMixin {
 
@@ -30,15 +32,15 @@ public abstract class MinecraftClientMixin {
 		}
 	}
 
-	private int getServerPing(){
+	private Optional<Integer> getServerPing(){
 		ClientPlayNetworkHandler handler = ((MinecraftClient)(Object) this).getNetworkHandler();
 
 		//Second condition checks whether the server is integrated
 		if(handler == null || ((MinecraftClient)(Object) this).getServer() != null){
-			return -1;
+			return Optional.empty();
 		}
 
-		return handler.getPlayerListEntry(handler.getProfile().getId()).getLatency();
+		return Optional.of(handler.getPlayerListEntry(handler.getProfile().getId()).getLatency());
 	}
 
 	//Gets the minimum fps over the last second by finding the largest frame time
