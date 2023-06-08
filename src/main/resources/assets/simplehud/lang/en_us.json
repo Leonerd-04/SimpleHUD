@@ -26,6 +26,7 @@
   "simplehud.config.fps_min" : "Show Minimum FPS",
   "simplehud.config.fps_min.true" : "ON",
   "simplehud.config.fps_min.false" : "OFF",
+  "simplehud.config.high_ping" : "Indicate High Ping",
   "simplehud.config.respect_reduced_f3" : "Respect Reduced F3",
   "simplehud.config.respect_reduced_f3.true" : "ON",
   "simplehud.config.respect_reduced_f3.false" : "OFF"

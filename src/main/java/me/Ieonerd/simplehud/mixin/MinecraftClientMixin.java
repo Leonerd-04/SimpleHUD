@@ -3,20 +3,44 @@ package me.Ieonerd.simplehud.mixin;
 import me.Ieonerd.simplehud.gui.SimpleHUDDisplay;
 
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.util.MetricsData;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(MinecraftClient.class)
-public class MinecraftClientMixin {
+import java.util.Optional;
 
-	//Triggers whenever the current fps is set, so the average and minimum fps update simultaneously
-	@Inject(method = "render", at = @At(value = "INVOKE", target = "Ljava/lang/String;format(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;"))
+@Mixin(MinecraftClient.class)
+public abstract class MinecraftClientMixin {
+
+	private final static Logger LOGGER = LogManager.getLogger();
+
+	//Triggers whenever the current fps is set, so the average & minimum fps as well as the ping update simultaneously
+	@Inject(method = "render", at = @At(value = "INVOKE", target = "Ljava/lang/String;format(Ljava/util/Locale;Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;"))
 	public void updateDisplay(boolean tick, CallbackInfo ci){
 		SimpleHUDDisplay.setMinFps(calculateMinFps());
+
+		try {
+			SimpleHUDDisplay.setPing(getServerPing());
+		} catch(Throwable throwable){
+			LOGGER.error("setPing failed ", throwable);
+		}
+	}
+
+	private Optional<Integer> getServerPing(){
+		ClientPlayNetworkHandler handler = ((MinecraftClient)(Object) this).getNetworkHandler();
+
+		//Second condition checks whether the server is integrated
+		if(handler == null || ((MinecraftClient)(Object) this).getServer() != null){
+			return Optional.empty();
+		}
+
+		return Optional.of(handler.getPlayerListEntry(handler.getProfile().getId()).getLatency());
 	}
 
 	//Gets the minimum fps over the last second by finding the largest frame time
