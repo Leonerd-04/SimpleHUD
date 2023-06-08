@@ -4,7 +4,7 @@ import me.Ieonerd.simplehud.config.SimpleHUDConfig;
 import me.Ieonerd.simplehud.mixin.MinecraftClientAccessor;
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawableHelper;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.Vec3d;
@@ -63,7 +63,7 @@ public class SimpleHUDDisplay {
 
         for(String string : row) position += this.client.textRenderer.getWidth(string);
 
-        DrawableHelper.fill(matrices, 1, height - 1, 3 + position, height + 8, HUD_BACKGROUND);
+        DrawContext.fill(matrices, 1, height - 1, 3 + position, height + 8, HUD_BACKGROUND);
         position = 0;
 
         for(int i = 0; i < row.length; i++){
