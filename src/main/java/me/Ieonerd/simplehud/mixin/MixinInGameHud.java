@@ -20,7 +20,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Environment(EnvType.CLIENT)
 @Mixin(InGameHud.class)
-public class MixinInGameHud extends DrawContext {
+public class MixinInGameHud {
 
     @Shadow @Final private MinecraftClient client;
     SimpleHUDDisplay simpleHUD;
@@ -35,8 +35,8 @@ public class MixinInGameHud extends DrawContext {
     //It is rendered last, so it would appear above anything that the vanilla HUD would render.
     //It only renders when the F3 menu is closed.
     @Inject(method = "render", at = @At("TAIL"))
-    public void renderSimpleHud(MatrixStack matrices, float tickDelta, CallbackInfo ci){
-        if(!this.client.options.debugEnabled) simpleHUD.render(matrices);
+    public void renderSimpleHud(DrawContext context, float tickDelta, CallbackInfo ci){
+        if(!this.client.options.debugEnabled) simpleHUD.render(context);
     }
 
 }

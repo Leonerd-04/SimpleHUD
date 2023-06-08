@@ -32,7 +32,7 @@ public class SimpleHUDDisplay {
     //Rendering algorithm based off of the one used to render the left side of the F3 screen
     //With the exception that instead of rendering one string as a row, this mod renders one array of strings as a row
     //To allow for individual sections of a given row to be different colors.
-    public void render(MatrixStack matrices){
+    public void render(DrawContext context){
         int fps = MinecraftClientAccessor.getCurrentFPS();
 
         ArrayList<String[]> text = this.getText(fps, minFps);
@@ -49,28 +49,28 @@ public class SimpleHUDDisplay {
             Objects.requireNonNull(this.client.textRenderer);
 
             int height = 2 + 9 * i;
-            renderRow(matrices, height, row, rowColors);
+            renderRow(context, height, row, rowColors);
         }
     }
 
     //Renders an array of strings as a row in the HUD
     //colors is allowed to be shorter than row.
     //If this happens, the last color in the array of colors will be used to render the rest of the row.
-    private void renderRow(MatrixStack matrices, int height, String[] row, int[] colors){
+    private void renderRow(DrawContext context, int height, String[] row, int[] colors){
         int position = 0; //Stores the position to render a particular string in the row
         String str;
         int color = colors[0];
 
         for(String string : row) position += this.client.textRenderer.getWidth(string);
 
-        DrawContext.fill(matrices, 1, height - 1, 3 + position, height + 8, HUD_BACKGROUND);
+        context.fill(1, height - 1, 3 + position, height + 8, HUD_BACKGROUND);
         position = 0;
 
         for(int i = 0; i < row.length; i++){
             str = row[i];
             if(i < colors.length) color = colors[i];
 
-            this.client.textRenderer.draw(matrices, str, 2.0F + position, (float)height, color);
+            context.drawText(this.client.textRenderer, str, 2 + position, height, color, false);
             position += this.client.textRenderer.getWidth(str);
         }
     }
